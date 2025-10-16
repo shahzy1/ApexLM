@@ -1,0 +1,36 @@
+﻿@inherits LayoutComponentBase
+@using ApexLM.Components
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="h-screen bg-grey-light">
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+        <MudLink Href="/">
+            <MudImage Src="/assets/logo_FM.png" Alt="Tanolis logo" Width="50" Height="30" Elevation="25" Class="rounded-lg" />
+        </MudLink>
+        <MudText Typo="Typo.h5" Class="ml-1">ApexLM</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+
+    <MudContainer MaxWidth="MaxWidth.False" Class="d-flex h-100 p-1" Style="margin-top: 50px;">
+        <!-- Left Sources Panel -->
+        <MudPaper Class="p-3" Style="width: 260px; border-right: 1px solid #e0e0e0;">
+            <SourcePanel />
+        </MudPaper>
+
+        <!-- Center Chat Area -->
+        <MudPaper Class="flex-grow-1 p-4 overflow-auto" Elevation="0">
+            @Body
+        </MudPaper>
+
+        <!-- Right Studio Panel -->
+        <MudPaper Class="p-3" Style="width: 320px; border-left: 1px solid #e0e0e0;">
+            <StudioPanel />
+        </MudPaper>
+    </MudContainer>
+</MudLayout>
