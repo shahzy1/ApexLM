@@ -1,5 +1,5 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This project is about Azure AI and Azure OpenAI Service. It demonstrates how to use Azure AI services to build intelligent applications.This project is hosted in GitHub and is open for contributions from the community.
 
 # Getting Started
 TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
