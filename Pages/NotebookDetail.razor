@@ -1,0 +1,45 @@
+﻿@page "/notebookdetail/{NotebookId}"
+@using MudBlazor
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
+    <!-- Back Button -->
+    <MudButton Variant="Variant.Text" 
+               StartIcon="@Icons.Material.Filled.ArrowBack" 
+               OnClick="GoBack"
+               Class="mb-4">
+        Back to notebooks
+    </MudButton>
+
+    <!-- Notebook Header -->
+    <MudCard Class="mb-6">
+        <MudCardContent>
+            <div class="d-flex justify-space-between align-center">
+                <div>
+                    <MudText Typo="Typo.h4" GutterBottom="true">@currentNotebook?.Title</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-2">
+                        @currentNotebook?.Description
+                    </MudText>
+                    <div class="d-flex align-center">
+                        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mr-4">
+                            @currentNotebook?.Date
+                        </MudText>
+                        <MudChip T="string" Variant="Variant.Filled" 
+                                Color="Color.Default" 
+                                Size="Size.Small"
+                                Text="@($"{currentNotebook?.SourceCount} sources")" />
+                    </div>
+                </div>
+                <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                             Color="Color.Inherit" />
+            </div>
+        </MudCardContent>
+    </MudCard>
+
+    <!-- Notebook Content (You can add your notebook layout here) -->
+    <MudText Typo="Typo.h6" Class="mb-4">Notebook Content</MudText>
+    <MudText Color="Color.Secondary">
+        This is where your notebook content would be displayed.
+        You can implement the layout from your previous design here.
+    </MudText>
+</MudContainer>

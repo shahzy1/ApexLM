@@ -7,7 +7,7 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
         <MudLink Href="/">
             <MudImage Src="/assets/logo_FM.png" Alt="Tanolis logo" Width="50" Height="30" Elevation="25" Class="rounded-lg"/>
         </MudLink>
@@ -15,9 +15,6 @@
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
-    </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
             @Body
@@ -25,7 +22,7 @@
     </MudMainContent>
 </MudLayout>
 
-@code {
+@* @code {
     bool _drawerOpen = true;
 
     void DrawerToggle()
@@ -33,5 +30,5 @@
         _drawerOpen = !_drawerOpen;
     }
 }
-
+ *@
 

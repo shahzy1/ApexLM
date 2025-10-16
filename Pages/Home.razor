@@ -1,62 +1,217 @@
 ﻿@page "/"
+@using MudBlazor
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
-
-<MudText Typo="Typo.h5" Class="ml-3 mt-2">Welcome to TANOLIS, LLC</MudText>
-
-<MudText Typo="Typo.h6" Class="ml-3 mt-4">
-    Custom Software Solutions. Minority-Owned. Client-Focused.
-</MudText>
-
-    <MudText Typo="Typo.body1" Class="ml-3 mt-4">
-
-    <div class="mt-2">
-        At TANOLIS, LLC, we deliver tailored, end-to-end software solutions designed to meet your unique business needs. Proudly minority-owned and based in Arlington, VA, we combine deep technical expertise with a collaborative, hands-on approach to bring your vision to life.
+<MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
+    <!-- Header with Create Button and View Toggle -->
+    <div class="d-flex justify-space-between align-center mb-8">
+        <MudText Typo="Typo.h5" Color="Color.Primary">
+            Featured notebooks
+        </MudText>
+        <div class="d-flex align-center gap-2">
+            <!-- View Toggle Button -->
+            <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary">
+                <MudButton OnClick="@(() => ChangeView(LayoutView.Card))" 
+                          Variant="@(currentView == LayoutView.Card ? Variant.Filled : Variant.Outlined)"
+                          Color="Color.Primary"
+                          StartIcon="@Icons.Material.Filled.ViewModule"
+                          Size="Size.Small">
+                    Card
+                </MudButton>
+                <MudButton OnClick="@(() => ChangeView(LayoutView.List))" 
+                          Variant="@(currentView == LayoutView.List ? Variant.Filled : Variant.Outlined)"
+                          Color="Color.Primary"
+                          StartIcon="@Icons.Material.Filled.ViewList"
+                          Size="Size.Small">
+                    List
+                </MudButton>
+            </MudButtonGroup>
+            
+            <!-- Create New Notebook Button -->
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       StartIcon="@Icons.Material.Filled.Add"
+                       OnClick="CreateNewNotebook"
+                       Size="Size.Small">
+                Create new notebook
+            </MudButton>
+        </div>
     </div>
 
-    <div class="mt-2">
-        Whether you’re a startup building from scratch or an enterprise modernizing legacy systems, our agile, results-driven team creates scalable, secure, and innovative solutions that deliver measurable impact.
-    </div>
+    <!-- Card View -->
+    @if (currentView == LayoutView.Card)
+    {
+        <MudGrid Spacing="3" Class="mb-12">
+            @foreach (var notebook in featuredNotebooks)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Class="h-100">
+                        <MudCardContent Class="clickable-content" @onclick="@(() => OpenNotebook(notebook.Id))">
+                            <div class="d-flex justify-space-between align-start mb-2">
+                                <MudText Typo="Typo.h6" Class="mb-1 flex-grow-1">@notebook.Title</MudText>
+                                <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                                             Size="Size.Small" 
+                                             Color="Color.Inherit" 
+                                             OnClick="@(() => HandleMenuClick(notebook))"
+                                             OnClick:stopPropagation="true" />
+                            </div>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                @notebook.Description
+                            </MudText>
+                            <div class="d-flex align-center justify-space-between mt-3">
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    @notebook.Date
+                                </MudText>
+                                <MudChip T="string" Variant="Variant.Filled" 
+                                        Color="Color.Default" 
+                                        Size="Size.Small">
+                                    @($"{notebook.SourceCount} sources")
+                                </MudChip>
+                            </div>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+    else
+    {
+        <!-- List View -->
+        <MudCard Class="mb-12">
+            <MudList T="string">
+                @foreach (var notebook in featuredNotebooks)
+                {
+                    <MudListItem T="string"
+                                Value="@notebook.Id"
+                                OnClick="@(() => OpenNotebook(notebook.Id))"
+                                Icon="@Icons.Material.Filled.Note">
+                        <MudText Typo="Typo.h6">@notebook.Title</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
+                        <div class="d-flex align-center justify-space-between mt-1">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
+                            <MudChip Variant="Variant.Filled" 
+                                    Color="Color.Default" 
+                                    Size="Size.Small">
+                                @($"{notebook.SourceCount} sources")
+                            </MudChip>
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+        </MudCard>
+    }
+
+    <!-- Recent Notebooks Section -->
+    <MudText Typo="Typo.h5" GutterBottom="true" Color="Color.Primary" Class="mb-4">
+        Recent notebooks
     </MudText>
 
-    <MudText Typo="Typo.h6" Class="ml-3 mt-4">
-    🧩 Our Core Services
-    </MudText>
+    <MudCard>
+        <MudList T="string">
+            @foreach (var notebook in recentNotebooks)
+            {
+                <MudListItem T="string"
+                            Value="@notebook.Id"
+                            OnClick="@(() => OpenNotebook(notebook.Id))"
+                            Icon="@Icons.Material.Filled.Note"
+                            Text="@notebook.Title"
+                            SecondaryText="@($"{notebook.Date} - {notebook.SourceCount} sources")" />
+            }
+        </MudList>
+    </MudCard>
+</MudContainer>
 
-    <MudText Typo="Typo.body1" Class="ml-3 mt-4">
+@code {
+    private List<Notebook> featuredNotebooks = new();
+    private List<Notebook> recentNotebooks = new();
+    private LayoutView currentView = LayoutView.Card;
 
-    <ul class="mt-2 mb-2">
-        <li>💻 Custom Application Development</li>
-        <li>☁️ Cloud Integration & Migration (Azure, AWS)</li>
-        <li>📱 Web & Mobile App Development</li>
-        <li>🔗 API & Microservices Architecture</li>
-        <li>♻️ Legacy System Modernization</li>
-        <li>🗄️ Database & Data Warehouse Development</li>
-    </ul>
+    protected override void OnInitialized()
+    {
+        LoadSampleData();
+    }
 
-    </MudText>
+    private void LoadSampleData()
+    {
+        // Featured notebooks
+        featuredNotebooks = new List<Notebook>
+        {
+            new Notebook { Id = "1", Title = "The Two Sequences", Description = "Parenting Advice for the Digital Age", Date = "May 4, 2025", SourceCount = 21 },
+            new Notebook { Id = "2", Title = "On World in Duff", Description = "Trends in Health, Wealth and...", Date = "Apr 15, 2025", SourceCount = 24 },
+            new Notebook { Id = "3", Title = "The Encrowded", Description = "The World Ahead 2025", Date = "Jul 7, 2025", SourceCount = 10 },
+            new Notebook { Id = "4", Title = "The Atlantic", Description = "How To Build A Life, from The Atlantic", Date = "Apr 22, 2025", SourceCount = 44 },
+            new Notebook { Id = "5", Title = "New notebook", Description = "Antl and Culture\nWilliam Shakespeare: The...", Date = "Apr 25, 2025", SourceCount = 45 }
+        };
 
-    <MudText Typo="Typo.h6" Class="ml-3 mt-4">
-        🤖 AI & Machine Learning Solutions
-    </MudText>
+        // Recent notebooks
+        recentNotebooks = new List<Notebook>
+        {
+            new Notebook { Id = "6", Title = "Untitled notebook", Description = "", Date = "Oct 14, 2025", SourceCount = 0 },
+            new Notebook { Id = "7", Title = "Azure AI Text Analytics for...", Description = "", Date = "Oct 15, 2025", SourceCount = 3 }
+        };
+    }
 
-    <MudText Typo="Typo.body1" Class="ml-3 mt-4">
-    <ul>
-        <li>📊 Predictive Analytics — anticipate trends with data-driven forecasting</li>
-        <li>💬 Natural Language Processing (NLP) — chatbots, sentiment analysis, and text mining</li>
-        <li>👁️ Computer Vision — image recognition, object detection, and process automation</li>
-        <li>🎯 Recommendation Systems — personalized content and product suggestions</li>
-        <li>🛠️ Data Engineering for AI — scalable data pipelines for model training</li>
-        <li>🧠 Custom AI Model Development — tailored to your unique business needs</li>
-        <li>🚀 MLOps & AI Deployment — production-ready AI with continuous optimization</li>
-    </ul>
-    <div class="mt-2">
-        Powered by Azure AI, Azure Machine Learning, TensorFlow, and Scikit-learn, we deliver AI solutions that are secure, scalable, and ready for business impact.
-    </div>
+    private void OpenNotebook(string notebookId)
+    {
+        Console.WriteLine($"Opening notebook: {notebookId}");
+        Navigation.NavigateTo($"/notebookdetail/{notebookId}");
+    }
 
-</MudText>
+    private void CreateNewNotebook()
+    {
+        Navigation.NavigateTo("/notebook");
+    }
 
-<MudText Typo="Typo.h5" Class="ml-3 mt-4 mb-4">
-    <MudLink Href="mailto:support@tanolis.us">📩 Contact us today to schedule a free consultation.</MudLink>    
-</MudText>
+    private void HandleMenuClick(Notebook notebook)
+    {
+        Console.WriteLine($"Menu clicked for: {notebook.Title}");
+    }
 
+    private void ChangeView(LayoutView newView)
+    {
+        currentView = newView;
+    }
+
+    public class Notebook
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public int SourceCount { get; set; }
+    }
+
+    private enum LayoutView
+    {
+        Card,
+        List
+    }
+}
+
+<style>
+    .clickable-content {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        height: 100%;
+    }
+
+    .clickable-content:hover {
+        background-color: var(--mud-palette-action-hover);
+    }
+
+    .mud-card {
+        border-radius: 8px;
+    }
+
+    .mud-list-item {
+        cursor: pointer;
+    }
+
+    .mud-list-item:hover {
+        background-color: var(--mud-palette-action-hover);
+    }
+
+    .gap-2 {
+        gap: 8px;
+    }
+</style>

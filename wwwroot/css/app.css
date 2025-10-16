@@ -1,31 +1,4 @@
 
-/*------------------------------------ Custom -------------------------------------*/
-.bg-grey-light {
-    background-color: #fafafa;
-}
-
-.border-end {
-    border-right: 1px solid #e0e0e0;
-}
-
-.border-start {
-    border-left: 1px solid #e0e0e0;
-}
-
-.border-top {
-    border-top: 1px solid #e0e0e0;
-}
-
-/* Keeps bottom nav fixed and safe on iPhones with notches */
-@media (max-width: 960px) {
-    .mud-tabs {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
-}
-
-body, .mud-layout {
-    background-color: var(--mud-palette-background);
-}
 
 /*------------------------------------ Original -----------------------------------------*/
 html, body {
