@@ -3,11 +3,26 @@
 @inject NavigationManager Navigation
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-    <!-- Header with Create Button and View Toggle -->
+    <!-- Header with Filter Buttons, Create Button and View Toggle -->
     <div class="d-flex justify-space-between align-center mb-8">
-        <MudText Typo="Typo.h5" Color="Color.Primary">
-            Featured notebooks
-        </MudText>
+        <div class="d-flex align-center gap-2">
+            <!-- Filter Buttons -->
+            <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary">
+                <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.All))" 
+                          Variant="@(currentFilter == NotebookFilter.All ? Variant.Filled : Variant.Outlined)"
+                          Color="Color.Primary"
+                          Size="Size.Small">
+                    All
+                </MudButton>
+                <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.Featured))" 
+                          Variant="@(currentFilter == NotebookFilter.Featured ? Variant.Filled : Variant.Outlined)"
+                          Color="Color.Primary"
+                          Size="Size.Small">
+                    Featured
+                </MudButton>
+            </MudButtonGroup>
+        </div>
+        
         <div class="d-flex align-center gap-2">
             <!-- View Toggle Button -->
             <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary">
@@ -27,7 +42,6 @@
                 </MudButton>
             </MudButtonGroup>
             
-            <!-- Create New Notebook Button -->
             <MudButton Variant="Variant.Filled" 
                        Color="Color.Primary" 
                        StartIcon="@Icons.Material.Filled.Add"
@@ -38,97 +52,258 @@
         </div>
     </div>
 
-    <!-- Card View -->
-    @if (currentView == LayoutView.Card)
+    <!-- All Notebooks View -->
+    @if (currentFilter == NotebookFilter.All)
     {
-        <MudGrid Spacing="3" Class="mb-12">
-            @foreach (var notebook in featuredNotebooks)
+        <!-- Featured Notebooks Section -->
+        <div class="mb-12">
+            <div class="d-flex justify-space-between align-center mb-4">
+                <MudText Typo="Typo.h5" Color="Color.Primary">
+                    Featured notebooks
+                </MudText>
+                
+                @if (featuredNotebooks.Count > 5 && !showAllFeatured)
+                {
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowAllFeatured"
+                              EndIcon="@Icons.Material.Filled.ExpandMore"
+                              Size="Size.Small">
+                        See All (@featuredNotebooks.Count)
+                    </MudButton>
+                }
+                else if (featuredNotebooks.Count > 5 && showAllFeatured)
+                {
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowLessFeatured"
+                              EndIcon="@Icons.Material.Filled.ExpandLess"
+                              Size="Size.Small">
+                        Show Less
+                    </MudButton>
+                }
+            </div>
+
+            @if (currentView == LayoutView.Card)
             {
-                <MudItem xs="12" sm="6" md="4">
-                    <MudCard Class="h-100">
-                        <MudCardContent Class="clickable-content" @onclick="@(() => OpenNotebook(notebook.Id))">
-                            <div class="d-flex justify-space-between align-start mb-2">
-                                <MudText Typo="Typo.h6" Class="mb-1 flex-grow-1">@notebook.Title</MudText>
-                                <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
-                                             Size="Size.Small" 
-                                             Color="Color.Inherit" 
-                                             OnClick="@(() => HandleMenuClick(notebook))"
-                                             OnClick:stopPropagation="true" />
-                            </div>
-                            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
-                                @notebook.Description
-                            </MudText>
-                            <div class="d-flex align-center justify-space-between mt-3">
-                                <MudText Typo="Typo.caption" Color="Color.Secondary">
-                                    @notebook.Date
-                                </MudText>
-                                <MudChip T="string" Variant="Variant.Filled" 
-                                        Color="Color.Default" 
-                                        Size="Size.Small">
-                                    @($"{notebook.SourceCount} sources")
-                                </MudChip>
-                            </div>
-                        </MudCardContent>
-                    </MudCard>
-                </MudItem>
+                <!-- Card View -->
+                <MudGrid Spacing="3">
+                    @foreach (var notebook in displayedFeaturedNotebooks)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="h-100">
+                                <MudCardContent Class="clickable-content" @onclick="@(() => OpenNotebook(notebook.Id))">
+                                    <div class="d-flex justify-space-between align-start mb-2">
+                                        <MudText Typo="Typo.h6" Class="mb-1 flex-grow-1">@notebook.Title</MudText>
+                                        <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                                                     Size="Size.Small" 
+                                                     Color="Color.Inherit" 
+                                                     OnClick="@(() => HandleMenuClick(notebook))"
+                                                     OnClick:stopPropagation="true" />
+                                    </div>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                        @notebook.Description
+                                    </MudText>
+                                    <div class="d-flex align-center justify-space-between mt-3">
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                            @notebook.Date
+                                        </MudText>
+                                        <MudChip T="string" Variant="Variant.Filled" 
+                                                Color="Color.Default" 
+                                                Size="Size.Small">
+                                            @($"{notebook.SourceCount} sources")
+                                        </MudChip>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
             }
-        </MudGrid>
+            else
+            {
+                <!-- List View -->
+                <MudCard>
+                    <MudList T="string">
+                        @foreach (var notebook in displayedFeaturedNotebooks)
+                        {
+                            <MudListItem T="string"
+                                        Value="@notebook.Id"
+                                        OnClick="@(() => OpenNotebook(notebook.Id))"
+                                        Icon="@Icons.Material.Filled.Note">
+                                <MudText Typo="Typo.h6">@notebook.Title</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
+                                <div class="d-flex align-center justify-space-between mt-1">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
+                                    <MudChip Variant="Variant.Filled" 
+                                            Color="Color.Default" 
+                                            Size="Size.Small">
+                                        @($"{notebook.SourceCount} sources")
+                                    </MudChip>
+                                </div>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudCard>
+            }
+        </div>
+
+        <!-- Recent Notebooks Section -->
+        <div>
+            <div class="d-flex justify-space-between align-center mb-4">
+                <MudText Typo="Typo.h5" Color="Color.Primary">
+                    Recent notebooks
+                </MudText>
+                
+                @if (recentNotebooks.Count > 5 && !showAllRecent)
+                {
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowAllRecent"
+                              EndIcon="@Icons.Material.Filled.ExpandMore"
+                              Size="Size.Small">
+                        See All (@recentNotebooks.Count)
+                    </MudButton>
+                }
+                else if (recentNotebooks.Count > 5 && showAllRecent)
+                {
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowLessRecent"
+                              EndIcon="@Icons.Material.Filled.ExpandLess"
+                              Size="Size.Small">
+                        Show Less
+                    </MudButton>
+                }
+            </div>
+
+            <MudCard>
+                <MudList T="string">
+                    @foreach (var notebook in displayedRecentNotebooks)
+                    {
+                        <MudListItem T="string"
+                                    Value="@notebook.Id"
+                                    OnClick="@(() => OpenNotebook(notebook.Id))"
+                                    Icon="@Icons.Material.Filled.Note"
+                                    Text="@notebook.Title"
+                                    SecondaryText="@($"{notebook.Date} - {notebook.SourceCount} sources")" />
+                    }
+                </MudList>
+            </MudCard>
+        </div>
     }
     else
     {
-        <!-- List View -->
-        <MudCard Class="mb-12">
-            <MudList T="string">
-                @foreach (var notebook in featuredNotebooks)
+        <!-- Featured Only View -->
+        <div>
+            <div class="d-flex justify-space-between align-center mb-4">
+                <MudText Typo="Typo.h5" Color="Color.Primary">
+                    Featured notebooks (@featuredNotebooks.Count)
+                </MudText>
+                
+                @if (featuredNotebooks.Count > 5 && !showAllFeatured)
                 {
-                    <MudListItem T="string"
-                                Value="@notebook.Id"
-                                OnClick="@(() => OpenNotebook(notebook.Id))"
-                                Icon="@Icons.Material.Filled.Note">
-                        <MudText Typo="Typo.h6">@notebook.Title</MudText>
-                        <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
-                        <div class="d-flex align-center justify-space-between mt-1">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
-                            <MudChip Variant="Variant.Filled" 
-                                    Color="Color.Default" 
-                                    Size="Size.Small">
-                                @($"{notebook.SourceCount} sources")
-                            </MudChip>
-                        </div>
-                    </MudListItem>
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowAllFeatured"
+                              EndIcon="@Icons.Material.Filled.ExpandMore"
+                              Size="Size.Small">
+                        See All (@featuredNotebooks.Count)
+                    </MudButton>
                 }
-            </MudList>
-        </MudCard>
-    }
+                else if (featuredNotebooks.Count > 5 && showAllFeatured)
+                {
+                    <MudButton Variant="Variant.Text" 
+                              Color="Color.Primary" 
+                              OnClick="ShowLessFeatured"
+                              EndIcon="@Icons.Material.Filled.ExpandLess"
+                              Size="Size.Small">
+                        Show Less
+                    </MudButton>
+                }
+            </div>
 
-    <!-- Recent Notebooks Section -->
-    <MudText Typo="Typo.h5" GutterBottom="true" Color="Color.Primary" Class="mb-4">
-        Recent notebooks
-    </MudText>
-
-    <MudCard>
-        <MudList T="string">
-            @foreach (var notebook in recentNotebooks)
+            @if (currentView == LayoutView.Card)
             {
-                <MudListItem T="string"
-                            Value="@notebook.Id"
-                            OnClick="@(() => OpenNotebook(notebook.Id))"
-                            Icon="@Icons.Material.Filled.Note"
-                            Text="@notebook.Title"
-                            SecondaryText="@($"{notebook.Date} - {notebook.SourceCount} sources")" />
+                <!-- Card View -->
+                <MudGrid Spacing="3">
+                    @foreach (var notebook in displayedFeaturedNotebooks)
+                    {
+                        <MudItem xs="12" sm="6" md="4">
+                            <MudCard Class="h-100">
+                                <MudCardContent Class="clickable-content" @onclick="@(() => OpenNotebook(notebook.Id))">
+                                    <div class="d-flex justify-space-between align-start mb-2">
+                                        <MudText Typo="Typo.h6" Class="mb-1 flex-grow-1">@notebook.Title</MudText>
+                                        <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                                                     Size="Size.Small" 
+                                                     Color="Color.Inherit" 
+                                                     OnClick="@(() => HandleMenuClick(notebook))"
+                                                     OnClick:stopPropagation="true" />
+                                    </div>
+                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                        @notebook.Description
+                                    </MudText>
+                                    <div class="d-flex align-center justify-space-between mt-3">
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                            @notebook.Date
+                                        </MudText>
+                                        <MudChip T="string" Variant="Variant.Filled" 
+                                                Color="Color.Default" 
+                                                Size="Size.Small">
+                                            @($"{notebook.SourceCount} sources")
+                                        </MudChip>
+                                    </div>
+                                </MudCardContent>
+                            </MudCard>
+                        </MudItem>
+                    }
+                </MudGrid>
             }
-        </MudList>
-    </MudCard>
+            else
+            {
+                <!-- List View -->
+                <MudCard>
+                    <MudList T="string">
+                        @foreach (var notebook in displayedFeaturedNotebooks)
+                        {
+                            <MudListItem T="string"
+                                        Value="@notebook.Id"
+                                        OnClick="@(() => OpenNotebook(notebook.Id))"
+                                        Icon="@Icons.Material.Filled.Note">
+                                <MudText Typo="Typo.h6">@notebook.Title</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
+                                <div class="d-flex align-center justify-space-between mt-1">
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
+                                    <MudChip Variant="Variant.Filled" 
+                                            Color="Color.Default" 
+                                            Size="Size.Small">
+                                        @($"{notebook.SourceCount} sources")
+                                    </MudChip>
+                                </div>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudCard>
+            }
+        </div>
+    }
 </MudContainer>
 
 @code {
+
     private List<Notebook> featuredNotebooks = new();
     private List<Notebook> recentNotebooks = new();
+    private List<Notebook> displayedFeaturedNotebooks = new();
+    private List<Notebook> displayedRecentNotebooks = new();
     private LayoutView currentView = LayoutView.Card;
+    private NotebookFilter currentFilter = NotebookFilter.All;
+    private bool showAllFeatured = false;
+    private bool showAllRecent = false;
 
     protected override void OnInitialized()
     {
         LoadSampleData();
+        UpdateDisplayedNotebooks();
     }
 
     private void LoadSampleData()
@@ -140,15 +315,72 @@
             new Notebook { Id = "2", Title = "On World in Duff", Description = "Trends in Health, Wealth and...", Date = "Apr 15, 2025", SourceCount = 24 },
             new Notebook { Id = "3", Title = "The Encrowded", Description = "The World Ahead 2025", Date = "Jul 7, 2025", SourceCount = 10 },
             new Notebook { Id = "4", Title = "The Atlantic", Description = "How To Build A Life, from The Atlantic", Date = "Apr 22, 2025", SourceCount = 44 },
-            new Notebook { Id = "5", Title = "New notebook", Description = "Antl and Culture\nWilliam Shakespeare: The...", Date = "Apr 25, 2025", SourceCount = 45 }
+            new Notebook { Id = "5", Title = "New notebook", Description = "Antl and Culture\nWilliam Shakespeare: The...", Date = "Apr 25, 2025", SourceCount = 45 },
+            new Notebook { Id = "8", Title = "Science & Technology", Description = "Latest advancements in AI and ML", Date = "Jun 10, 2025", SourceCount = 18 },
+            new Notebook { Id = "9", Title = "Business Insights", Description = "Market trends and analysis", Date = "May 28, 2025", SourceCount = 32 }
         };
 
         // Recent notebooks
         recentNotebooks = new List<Notebook>
         {
             new Notebook { Id = "6", Title = "Untitled notebook", Description = "", Date = "Oct 14, 2025", SourceCount = 0 },
-            new Notebook { Id = "7", Title = "Azure AI Text Analytics for...", Description = "", Date = "Oct 15, 2025", SourceCount = 3 }
+            new Notebook { Id = "7", Title = "Azure AI Text Analytics for...", Description = "", Date = "Oct 15, 2025", SourceCount = 3 },
+            new Notebook { Id = "10", Title = "Project Alpha", Description = "New project documentation", Date = "Oct 16, 2025", SourceCount = 5 },
+            new Notebook { Id = "11", Title = "Research Notes", Description = "Important research findings", Date = "Oct 17, 2025", SourceCount = 8 },
+            new Notebook { Id = "12", Title = "Meeting Minutes", Description = "Weekly team meetings", Date = "Oct 18, 2025", SourceCount = 12 },
+            new Notebook { Id = "13", Title = "Learning Resources", Description = "Educational materials collection", Date = "Oct 19, 2025", SourceCount = 15 }
         };
+    }
+
+    private void UpdateDisplayedNotebooks()
+    {
+        displayedFeaturedNotebooks = showAllFeatured 
+            ? featuredNotebooks 
+            : featuredNotebooks.Take(5).ToList();
+
+        displayedRecentNotebooks = showAllRecent 
+            ? recentNotebooks 
+            : recentNotebooks.Take(5).ToList();
+    }
+
+    private void ChangeFilter(NotebookFilter filter)
+    {
+        currentFilter = filter;
+        // Reset expansion states when switching filters
+        if (filter == NotebookFilter.All)
+        {
+            showAllFeatured = false;
+            showAllRecent = false;
+        }
+        else
+        {
+            showAllFeatured = false;
+        }
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowAllFeatured()
+    {
+        showAllFeatured = true;
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowLessFeatured()
+    {
+        showAllFeatured = false;
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowAllRecent()
+    {
+        showAllRecent = true;
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowLessRecent()
+    {
+        showAllRecent = false;
+        UpdateDisplayedNotebooks();
     }
 
     private void OpenNotebook(string notebookId)
@@ -185,6 +417,12 @@
     {
         Card,
         List
+    }
+
+    private enum NotebookFilter
+    {
+        All,
+        Featured
     }
 }
 
