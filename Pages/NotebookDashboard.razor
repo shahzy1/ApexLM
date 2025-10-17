@@ -1,52 +1,80 @@
 ﻿@page "/"
 @using ApexLM.Shared
 @using MudBlazor
-
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 @layout MainLayout
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-    <!-- Header with Filter Buttons, Create Button and View Toggle -->
+    <!-- Header with Enhanced Filter Buttons -->
     <div class="d-flex justify-space-between align-center mb-8">
         <div class="d-flex align-center gap-2">
-            <!-- Filter Buttons -->
-            <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary">
-                <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.All))" 
-                          Variant="@(currentFilter == NotebookFilter.All ? Variant.Filled : Variant.Outlined)"
-                          Color="Color.Primary"
-                          Size="Size.Small">
-                    All
-                </MudButton>
-                <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.Featured))" 
-                          Variant="@(currentFilter == NotebookFilter.Featured ? Variant.Filled : Variant.Outlined)"
-                          Color="Color.Primary"
-                          Size="Size.Small">
-                    Featured
-                </MudButton>
-            </MudButtonGroup>
+            <!-- Enhanced Filter Buttons with Visual Indicators -->
+            <div class="filter-group">
+                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 filter-label">
+                    FILTER BY
+                </MudText>
+                <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary" Class="filter-buttons">
+                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.All))"
+                               Variant="@(currentFilter == NotebookFilter.All ? Variant.Filled : Variant.Outlined)"
+                               Color="@(currentFilter == NotebookFilter.All ? Color.Primary : Color.Inherit)"
+                               Size="Size.Small"
+                               StartIcon="@(currentFilter == NotebookFilter.All ? Icons.Material.Filled.Check : Icons.Material.Filled.FilterList)"
+                               Class="@($"filter-button {(currentFilter == NotebookFilter.All ? "filter-active" : "")}")">
+                        All
+                        @if (currentFilter == NotebookFilter.All)
+                        {
+                            <MudBadge Color="Color.Primary" Size="Size.Small" Class="ml-1">
+                                @(featuredNotebooks.Count + recentNotebooks.Count)
+                            </MudBadge>
+                        }
+                    </MudButton>
+                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.Featured))"
+                               Variant="@(currentFilter == NotebookFilter.Featured ? Variant.Filled : Variant.Outlined)"
+                               Color="@(currentFilter == NotebookFilter.Featured ? Color.Primary : Color.Inherit)"
+                               Size="Size.Small"
+                               StartIcon="@(currentFilter == NotebookFilter.Featured ? Icons.Material.Filled.Star : Icons.Material.Outlined.Star)"
+                               Class="@($"filter-button {(currentFilter == NotebookFilter.Featured ? "filter-active" : "")}")">
+                        Featured
+                        @if (currentFilter == NotebookFilter.Featured)
+                        {
+                            <MudBadge Color="Color.Primary" Size="Size.Small" Class="ml-1">
+                                @featuredNotebooks.Count
+                            </MudBadge>
+                        }
+                    </MudButton>
+                </MudButtonGroup>
+            </div>
         </div>
-        
+
         <div class="d-flex align-center gap-2">
-            <!-- View Toggle Button -->
-            <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary">
-                <MudButton OnClick="@(() => ChangeView(LayoutView.Card))" 
-                          Variant="@(currentView == LayoutView.Card ? Variant.Filled : Variant.Outlined)"
-                          Color="Color.Primary"
-                          StartIcon="@Icons.Material.Filled.ViewModule"
-                          Size="Size.Small">
-                    Card
-                </MudButton>
-                <MudButton OnClick="@(() => ChangeView(LayoutView.List))" 
-                          Variant="@(currentView == LayoutView.List ? Variant.Filled : Variant.Outlined)"
-                          Color="Color.Primary"
-                          StartIcon="@Icons.Material.Filled.ViewList"
-                          Size="Size.Small">
-                    List
-                </MudButton>
-            </MudButtonGroup>
+            <!-- Enhanced View Toggle with Visual Indicators -->
+            <div class="view-group">
+                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 view-label">
+                    VIEW
+                </MudText>
+                <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary" Class="view-buttons">
+                    <MudButton OnClick="@(() => ChangeView(LayoutView.Card))"
+                               Variant="@(currentView == LayoutView.Card ? Variant.Filled : Variant.Outlined)"
+                               Color="@(currentView == LayoutView.Card ? Color.Primary : Color.Inherit)"
+                               StartIcon="@Icons.Material.Filled.ViewModule"
+                               Size="Size.Small"
+                               Class="@($"view-button {(currentView == LayoutView.Card ? "view-active" : "")}")">
+                        Card
+                    </MudButton>
+                    <MudButton OnClick="@(() => ChangeView(LayoutView.List))"
+                               Variant="@(currentView == LayoutView.List ? Variant.Filled : Variant.Outlined)"
+                               Color="@(currentView == LayoutView.List ? Color.Primary : Color.Inherit)"
+                               StartIcon="@Icons.Material.Filled.ViewList"
+                               Size="Size.Small"
+                               Class="@($"view-button {(currentView == LayoutView.List ? "view-active" : "")}")">
+                        List
+                    </MudButton>
+                </MudButtonGroup>
+            </div>
             
-            <MudButton Variant="Variant.Filled" 
-                       Color="Color.Primary" 
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.Add"
                        OnClick="CreateNewNotebook"
                        Size="Size.Small">
@@ -54,6 +82,51 @@
             </MudButton>
         </div>
     </div>
+
+    <!-- Active Filter Indicator -->
+    <MudPaper Class="pa-3 mb-4 active-filter-indicator" Elevation="1">
+        <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center gap-3">
+                <MudChip T="string" 
+                         Variant="Variant.Filled" 
+                         Color="Color.Primary"
+                         Size="Size.Small"
+                         Icon="@GetFilterIcon(currentFilter)"
+                         Text="@GetFilterText(currentFilter)" />
+                
+                <MudChip T="string" 
+                         Variant="Variant.Filled" 
+                         Color="Color.Secondary"
+                         Size="Size.Small"
+                         Icon="@GetViewIcon(currentView)"
+                         Text="@($"{currentView} View")" />
+                
+                @if (showAllFeatured && currentFilter == NotebookFilter.All)
+                {
+                    <MudChip T="string" 
+                             Variant="Variant.Filled" 
+                             Color="Color.Tertiary"
+                             Size="Size.Small"
+                             Icon="@Icons.Material.Filled.ExpandLess"
+                             Text="All Featured" />
+                }
+                
+                @if (showAllRecent && currentFilter == NotebookFilter.All)
+                {
+                    <MudChip T="string" 
+                             Variant="Variant.Filled" 
+                             Color="Color.Tertiary"
+                             Size="Size.Small"
+                             Icon="@Icons.Material.Filled.ExpandLess"
+                             Text="All Recent" />
+                }
+            </div>
+            
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                Showing @GetTotalDisplayedCount() notebooks
+            </MudText>
+        </div>
+    </MudPaper>
 
     <!-- All Notebooks View -->
     @if (currentFilter == NotebookFilter.All)
@@ -301,13 +374,186 @@
     private NotebookFilter currentFilter = NotebookFilter.All;
     private bool showAllFeatured = false;
     private bool showAllRecent = false;
+    private bool _isInitialized = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        await LoadFilterStates();
         LoadSampleData();
+        UpdateDisplayedNotebooks();
+        _isInitialized = true;
+    }
+
+    private async Task LoadFilterStates()
+    {
+        try
+        {
+            // Load filter state
+            var storedFilter = await JS.InvokeAsync<string>("localStorage.getItem", "notebookFilter");
+            if (!string.IsNullOrEmpty(storedFilter) && Enum.TryParse<NotebookFilter>(storedFilter, out var filter))
+            {
+                currentFilter = filter;
+            }
+
+            // Load view state
+            var storedView = await JS.InvokeAsync<string>("localStorage.getItem", "notebookView");
+            if (!string.IsNullOrEmpty(storedView) && Enum.TryParse<LayoutView>(storedView, out var view))
+            {
+                currentView = view;
+            }
+
+            // Load expansion states
+            var storedShowAllFeatured = await JS.InvokeAsync<string>("localStorage.getItem", "showAllFeatured");
+            if (!string.IsNullOrEmpty(storedShowAllFeatured) && bool.TryParse(storedShowAllFeatured, out var showFeatured))
+            {
+                showAllFeatured = showFeatured;
+            }
+
+            var storedShowAllRecent = await JS.InvokeAsync<string>("localStorage.getItem", "showAllRecent");
+            if (!string.IsNullOrEmpty(storedShowAllRecent) && bool.TryParse(storedShowAllRecent, out var showRecent))
+            {
+                showAllRecent = showRecent;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading filter states: {ex.Message}");
+        }
+    }
+
+    private async Task SaveFilterState(string key, string value)
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", key, value);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving filter state: {ex.Message}");
+        }
+    }
+
+    private void ChangeFilter(NotebookFilter filter)
+    {
+        currentFilter = filter;
+        _ = SaveFilterState("notebookFilter", filter.ToString());
+
+        // Reset expansion states when switching filters
+        if (filter == NotebookFilter.All)
+        {
+            showAllFeatured = false;
+            showAllRecent = false;
+            _ = SaveFilterState("showAllFeatured", "false");
+            _ = SaveFilterState("showAllRecent", "false");
+        }
+        else
+        {
+            showAllFeatured = false;
+            _ = SaveFilterState("showAllFeatured", "false");
+        }
         UpdateDisplayedNotebooks();
     }
 
+    private void ChangeView(LayoutView newView)
+    {
+        currentView = newView;
+        _ = SaveFilterState("notebookView", newView.ToString());
+    }
+
+    private void ShowAllFeatured()
+    {
+        showAllFeatured = true;
+        _ = SaveFilterState("showAllFeatured", "true");
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowLessFeatured()
+    {
+        showAllFeatured = false;
+        _ = SaveFilterState("showAllFeatured", "false");
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowAllRecent()
+    {
+        showAllRecent = true;
+        _ = SaveFilterState("showAllRecent", "true");
+        UpdateDisplayedNotebooks();
+    }
+
+    private void ShowLessRecent()
+    {
+        showAllRecent = false;
+        _ = SaveFilterState("showAllRecent", "false");
+        UpdateDisplayedNotebooks();
+    }
+
+    // Clear all filter states (optional method)
+    private async Task ClearFilterStates()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", "notebookFilter");
+            await JS.InvokeVoidAsync("localStorage.removeItem", "notebookView");
+            await JS.InvokeVoidAsync("localStorage.removeItem", "showAllFeatured");
+            await JS.InvokeVoidAsync("localStorage.removeItem", "showAllRecent");
+
+            // Reset to defaults
+            currentFilter = NotebookFilter.All;
+            currentView = LayoutView.Card;
+            showAllFeatured = false;
+            showAllRecent = false;
+            UpdateDisplayedNotebooks();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error clearing filter states: {ex.Message}");
+        }
+    }
+
+    // Helper methods for visual indicators
+    private string GetFilterIcon(NotebookFilter filter)
+    {
+        return filter switch
+        {
+            NotebookFilter.All => Icons.Material.Filled.FilterList,
+            NotebookFilter.Featured => Icons.Material.Filled.Star,
+            _ => Icons.Material.Filled.FilterList
+        };
+    }
+
+    private string GetFilterText(NotebookFilter filter)
+    {
+        return filter switch
+        {
+            NotebookFilter.All => "All Notebooks",
+            NotebookFilter.Featured => "Featured Only",
+            _ => "All Notebooks"
+        };
+    }
+
+    private string GetViewIcon(LayoutView view)
+    {
+        return view switch
+        {
+            LayoutView.Card => Icons.Material.Filled.ViewModule,
+            LayoutView.List => Icons.Material.Filled.ViewList,
+            _ => Icons.Material.Filled.ViewModule
+        };
+    }
+
+    private int GetTotalDisplayedCount()
+    {
+        return currentFilter switch
+        {
+            NotebookFilter.All => displayedFeaturedNotebooks.Count + displayedRecentNotebooks.Count,
+            NotebookFilter.Featured => displayedFeaturedNotebooks.Count,
+            _ => displayedFeaturedNotebooks.Count + displayedRecentNotebooks.Count
+        };
+    }
+
+    // Your existing methods remain the same
     private void LoadSampleData()
     {
         // Featured notebooks
@@ -336,53 +582,13 @@
 
     private void UpdateDisplayedNotebooks()
     {
-        displayedFeaturedNotebooks = showAllFeatured 
-            ? featuredNotebooks 
+        displayedFeaturedNotebooks = showAllFeatured
+            ? featuredNotebooks
             : featuredNotebooks.Take(5).ToList();
 
-        displayedRecentNotebooks = showAllRecent 
-            ? recentNotebooks 
+        displayedRecentNotebooks = showAllRecent
+            ? recentNotebooks
             : recentNotebooks.Take(5).ToList();
-    }
-
-    private void ChangeFilter(NotebookFilter filter)
-    {
-        currentFilter = filter;
-        // Reset expansion states when switching filters
-        if (filter == NotebookFilter.All)
-        {
-            showAllFeatured = false;
-            showAllRecent = false;
-        }
-        else
-        {
-            showAllFeatured = false;
-        }
-        UpdateDisplayedNotebooks();
-    }
-
-    private void ShowAllFeatured()
-    {
-        showAllFeatured = true;
-        UpdateDisplayedNotebooks();
-    }
-
-    private void ShowLessFeatured()
-    {
-        showAllFeatured = false;
-        UpdateDisplayedNotebooks();
-    }
-
-    private void ShowAllRecent()
-    {
-        showAllRecent = true;
-        UpdateDisplayedNotebooks();
-    }
-
-    private void ShowLessRecent()
-    {
-        showAllRecent = false;
-        UpdateDisplayedNotebooks();
     }
 
     private void OpenNotebook(string notebookId)
@@ -399,11 +605,6 @@
     private void HandleMenuClick(Notebook notebook)
     {
         Console.WriteLine($"Menu clicked for: {notebook.Title}");
-    }
-
-    private void ChangeView(LayoutView newView)
-    {
-        currentView = newView;
     }
 
     public class Notebook
@@ -429,29 +630,81 @@
 }
 
 <style>
-    .clickable-content {
-        cursor: pointer;
+    /* Filter and View Group Styling */
+    .filter-group, .view-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-label, .view-label {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Active State Styling */
+    .filter-active {
+        font-weight: 600;
+        transform: scale(1.02);
         transition: all 0.2s ease-in-out;
-        height: 100%;
     }
 
-    .clickable-content:hover {
-        background-color: var(--mud-palette-action-hover);
+    .view-active {
+        font-weight: 600;
+        transform: scale(1.02);
+        transition: all 0.2s ease-in-out;
     }
 
-    .mud-card {
-        border-radius: 8px;
+    /* Active Filter Indicator */
+    .active-filter-indicator {
+        background-color: var(--mud-palette-background);
+        border-left: 4px solid var(--mud-palette-primary);
+        animation: slideIn 0.3s ease-out;
     }
 
-    .mud-list-item {
-        cursor: pointer;
+    /* Button Hover Effects */
+    .filter-button:hover, .view-button:hover {
+        transform: translateY(-1px);
+        transition: all 0.2s ease-in-out;
     }
 
-    .mud-list-item:hover {
-        background-color: var(--mud-palette-action-hover);
+    /* Badge Styling */
+    .mud-badge {
+        font-size: 0.7rem;
+        font-weight: 600;
     }
 
-    .gap-2 {
-        gap: 8px;
+    /* Animation */
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 960px) {
+        .d-flex.justify-space-between {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .filter-group, .view-group {
+            width: 100%;
+        }
+
+        .filter-buttons, .view-buttons {
+            width: 100%;
+        }
+
+        .filter-button, .view-button {
+            flex: 1;
+        }
     }
 </style>
