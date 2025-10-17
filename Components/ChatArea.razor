@@ -1,99 +1,93 @@
 ﻿@using MudBlazor
 
 <div class="chat-area @(IsMobile ? "mobile-chat" : "desktop-chat")">
-    <div class="chat-header">
-        <MudText Typo="Typo.h6">Chat</MudText>
-        <MudIconButton Icon="@Icons.Material.Filled.Clear" 
-                     Size="Size.Small" 
-                     Color="Color.Inherit"
-                     OnClick="ClearChat" />
-    </div>
+    <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <MudText Typo="Typo.h6">Chat</MudText>
+            <MudIconButton Icon="@Icons.Material.Filled.Clear"
+                           Size="Size.Small"
+                           Color="Color.Inherit"
+                           OnClick="ClearChat" />
+        </div>
 
-    <!-- Chat Messages -->
-    <div class="chat-messages" id="chat-messages">
-        @if (messages.Any())
-        {
-            @foreach (var message in messages)
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="chat-messages">
+            @if (messages.Any())
             {
-                <div class="@($"message {(message.IsUser ? "user-message" : "ai-message")}")">
-                    <div class="message-avatar">
-                        @if (message.IsUser)
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.Person" 
-                                    Size="Size.Small" 
-                                    Color="Color.Primary" />
-                        }
-                        else
-                        {
-                            <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" 
-                                    Size="Size.Small" 
-                                    Color="Color.Secondary" />
-                        }
+                @foreach (var message in messages)
+                {
+                    <div class="@($"message {(message.IsUser ? "user-message" : "ai-message")}")">
+                        <div class="message-avatar">
+                            @if (message.IsUser)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Person"
+                                         Size="Size.Small"
+                                         Color="Color.Primary" />
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                         Size="Size.Small"
+                                         Color="Color.Secondary" />
+                            }
+                        </div>
+                        <div class="message-content">
+                            <MudText Typo="Typo.body1" Class="mb-1">@message.Content</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@message.Timestamp</MudText>
+                        </div>
                     </div>
-                    <div class="message-content">
-                        <MudText Typo="Typo.body1" Class="mb-1">@message.Content</MudText>
-                        <MudText Typo="Typo.caption" Color="Color.Secondary">@message.Timestamp</MudText>
+                }
+            }
+            else
+            {
+                <!-- Welcome State -->
+                <div class="welcome-state">
+                    <div class="welcome-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                 Size="Size.Large"
+                                 Color="Color.Primary" />
+                    </div>
+                    <MudText Typo="Typo.h6" Class="mb-2 text-center">How can I help you today?</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4 text-center">
+                        Ask questions about your sources, summarize content, or generate insights.
+                    </MudText>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Summarize the main themes"))">
+                            <MudCardContent Class="pa-3 text-center">
+                                <MudIcon Icon="@Icons.Material.Filled.Summarize"
+                                         Color="Color.Primary"
+                                         Class="mb-2" />
+                                <MudText Typo="Typo.caption">Summarize</MudText>
+                            </MudCardContent>
+                        </MudCard>
+
+                        <MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Find key insights"))">
+                            <MudCardContent Class="pa-3 text-center">
+                                <MudIcon Icon="@Icons.Material.Filled.Insights"
+                                         Color="Color.Primary"
+                                         Class="mb-2" />
+                                <MudText Typo="Typo.caption">Key Insights</MudText>
+                            </MudCardContent>
+                        </MudCard>
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <!-- Welcome State -->
-            <div class="welcome-state">
-                <div class="welcome-icon">
-                    <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" 
-                            Size="Size.Large" 
-                            Color="Color.Primary" />
-                </div>
-                <MudText Typo="Typo.h6" Class="mb-2 text-center">How can I help you today?</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4 text-center">
-                    Ask questions about your sources, summarize content, or generate insights.
-                </MudText>
-                
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Summarize the main themes"))">
-    <MudCardContent Class="pa-3 text-center">
-        <MudIcon Icon="@Icons.Material.Filled.Summarize" 
-                Color="Color.Primary" 
-                Class="mb-2" />
-        <MudText Typo="Typo.caption">Summarize</MudText>
-    </MudCardContent>
-</MudCard>
+        </div>
 
-<MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Find key insights"))">
-    <MudCardContent Class="pa-3 text-center">
-        <MudIcon Icon="@Icons.Material.Filled.Insights" 
-                Color="Color.Primary" 
-                Class="mb-2" />
-        <MudText Typo="Typo.caption">Key Insights</MudText>
-    </MudCardContent>
-</MudCard>
-
-<MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Suggest related topics"))">
-    <MudCardContent Class="pa-3 text-center">
-        <MudIcon Icon="@Icons.Material.Filled.AccountTree" 
-                Color="Color.Primary" 
-                Class="mb-2" />
-        <MudText Typo="Typo.caption">Related Topics</MudText>
-    </MudCardContent>
-</MudCard>
-                </div>
-            </div>
-        }
-    </div>
-
-    <!-- Chat Input -->
-    <div class="chat-input">
-        <MudTextField @bind-Value="newMessage" 
-                     Variant="Variant.Outlined"
-                     Placeholder="Ask about your sources..."
-                     Adornment="Adornment.End"
-                     AdornmentIcon="@Icons.Material.Filled.Send"
-                     OnAdornmentClick="SendMessage"
-                     Class="flex-grow-1"
-                     Size="Size.Medium" />
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <MudTextField @bind-Value="newMessage"
+                          Variant="Variant.Outlined"
+                          Placeholder="Ask about your sources..."
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="SendMessage"
+                          Class="chat-input-field"
+                          Size="Size.Medium" />
+        </div>
     </div>
 </div>
 
@@ -112,7 +106,6 @@
 
     protected override void OnInitialized()
     {
-        // Add welcome message
         messages.Add(new ChatMessage
         {
             Content = $"Hello! I'm ready to help you explore \"{NotebookTitle}\". You can ask me to summarize content, find connections between sources, or generate new insights based on your materials.",
@@ -133,8 +126,7 @@
 
         var userMessage = newMessage;
         newMessage = string.Empty;
-        
-        // Add user message
+
         messages.Add(new ChatMessage
         {
             Content = userMessage,
@@ -145,9 +137,8 @@
         StateHasChanged();
         await ScrollToBottom();
 
-        // Simulate AI response
         await Task.Delay(1000);
-        
+
         messages.Add(new ChatMessage
         {
             Content = GetAIResponse(userMessage),
@@ -180,25 +171,22 @@
     {
         await InvokeAsync(() =>
         {
-            var element = JS.InvokeAsync<object>("eval", 
+            var element = JS.InvokeAsync<object>("eval",
                 "var chat = document.getElementById('chat-messages'); if (chat) chat.scrollTop = chat.scrollHeight;");
         });
     }
 
     private string GetAIResponse(string userMessage)
     {
-        // Simple AI response simulation
         if (userMessage.ToLower().Contains("summarize"))
         {
-            return "Based on your 6 sources, here are the main themes I've identified... [This is a simulated response demonstrating the three-pane layout]";
+            return "Based on your sources, here are the main themes I've identified... [This is a simulated response]";
         }
         else
         {
-            return $"I've analyzed your query about '{userMessage}'. Looking across your {sources} sources, I can provide insights and connections. [This is a simulated response in the three-pane layout]";
+            return $"I've analyzed your query about '{userMessage}'. Looking across your sources, I can provide insights and connections. [This is a simulated response]";
         }
     }
-
-    private int sources => 6; // Sample count
 
     public class ChatMessage
     {
@@ -226,6 +214,13 @@
         padding: 12px;
     }
 
+    .chat-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Important for flexbox scrolling */
+    }
+
     .chat-header {
         display: flex;
         justify-content: space-between;
@@ -237,6 +232,7 @@
     .chat-messages {
         flex: 1;
         overflow-y: auto;
+        min-height: 0; /* Important for flexbox scrolling */
         padding: 8px 0;
         margin-bottom: 16px;
     }
@@ -273,6 +269,8 @@
         padding: 12px 16px;
         border-radius: 18px;
         background-color: var(--mud-palette-grey-light);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
 
     .user-message .message-content {
@@ -300,9 +298,9 @@
 
     .quick-actions {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        max-width: 400px;
+        max-width: 300px;
         width: 100%;
     }
 
@@ -311,13 +309,19 @@
         transition: all 0.2s ease-in-out;
     }
 
-    .quick-action-card:hover {
-        background-color: var(--mud-palette-action-hover);
-        transform: translateY(-2px);
+        .quick-action-card:hover {
+            background-color: var(--mud-palette-action-hover);
+            transform: translateY(-2px);
+        }
+
+    .chat-input-container {
+        flex-shrink: 0;
+        padding-top: 16px;
+        border-top: 1px solid var(--mud-palette-lines-default);
     }
 
-    .chat-input {
-        flex-shrink: 0;
+    .chat-input-field {
+        width: 100%;
     }
 
     /* Scrollbar styling */
@@ -332,5 +336,14 @@
     .chat-messages::-webkit-scrollbar-thumb {
         background: var(--mud-palette-action-disabled);
         border-radius: 3px;
+    }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--mud-palette-action-disabled-background);
+        }
+
+    /* Ensure proper flexbox behavior */
+    .chat-container > * {
+        min-height: 0;
     }
 </style>

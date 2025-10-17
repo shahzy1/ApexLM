@@ -8,56 +8,25 @@
 <MudLayout>
     <!-- Mobile Header -->
     <MudAppBar Elevation="1" Class="d-lg-none">
-        <MudIconButton Icon="Icons.Material.Filled.ArrowBack" 
-                      Color="Color.Inherit" 
-                      Edge="Edge.Start"
-                      OnClick="GoBack" />
+        <MudIconButton Icon="Icons.Material.Filled.ArrowBack"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="GoBack" />
         <MudSpacer />
         <MudText Typo="Typo.h6" Class="text-truncate px-2">
             @currentNotebook?.Title
         </MudText>
         <MudSpacer />
-        <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
-                      Color="Color.Inherit" 
-                      Edge="Edge.End" />
+        <MudIconButton Icon="Icons.Material.Filled.MoreVert"
+                       Color="Color.Inherit"
+                       Edge="Edge.End" />
     </MudAppBar>
 
     <MudMainContent>
         <div class="notebook-container">
-            <!-- Desktop Header -->
-@*              <div class="desktop-header d-none d-lg-block">
-                <MudContainer MaxWidth="MaxWidth.False" Class="px-4">
-                    <div class="d-flex align-center gap-4 py-3">
-                        <MudIconButton Icon="Icons.Material.Filled.ArrowBack" 
-                                      Color="Color.Inherit" 
-                                      OnClick="GoBack" />
-                        <div class="flex-grow-1 min-width-0">
-                            <MudText Typo="Typo.h6" Class="text-truncate">@currentNotebook?.Title</MudText>
-                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="text-truncate">
-                                @currentNotebook?.Description
-                            </MudText>
-                        </div>
-                        <div class="d-flex align-center gap-2">
-                            <MudText Typo="Typo.caption" Color="Color.Secondary">
-                                @currentNotebook?.Date
-                            </MudText>
-                            <MudChip T="string" Variant="Variant.Filled" 
-                                    Color="Color.Default" 
-                                    Size="Size.Small">
-                                @($"{currentNotebook?.SourceCount} sources")
-                            </MudChip>
-                            <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
-                                         Color="Color.Inherit" />
-                        </div>
-                    </div>
-                </MudContainer>
-                <MudDivider />
-            </div>
- *@
             <!-- Mobile Tab Navigation -->
             <MudPaper Class="d-lg-none mobile-tabs" Elevation="0">
-                <MudTabs @bind-ActivePanelIndex="mobileActiveTab" Color="Color.Primary" Centered="true"
-                         ToolbarClass="mud-tabs-min-width" Application="false">
+                <MudTabs @bind-ActivePanelIndex="mobileActiveTab" Color="Color.Primary" Centered="true">
                     <MudTabPanel Text="Sources">
                         <MudIcon Icon="@Icons.Material.Filled.Folder" Class="mr-2" />
                         Sources
@@ -75,20 +44,19 @@
 
             <!-- Three Pane Layout -->
             <div class="three-pane-container">
-                <!-- Left Pane - Sources (Desktop) -->
+                <!-- Left Pane - Sources -->
                 <div class="pane left-pane d-none d-lg-block">
-                    <SourcePanel NotebookId="@NotebookId" 
-                                SourceCount="@(currentNotebook?.SourceCount ?? 0)" />
+                    <SourcePanel NotebookId="@NotebookId"
+                                 SourceCount="@(currentNotebook?.SourceCount ?? 0)" />
                 </div>
 
                 <!-- Middle Pane - Chat -->
                 <div class="pane middle-pane @(mobileActiveTab == 1 ? "d-block" : "d-lg-block")">
-                    <ChatArea NotebookId="@NotebookId" 
-                             NotebookTitle="@currentNotebook?.Title"
-                             IsMobile="false" />
+                    <ChatArea NotebookId="@NotebookId"
+                              NotebookTitle="@currentNotebook?.Title" />
                 </div>
 
-                <!-- Right Pane - Studio (Desktop) -->
+                <!-- Right Pane - Studio -->
                 <div class="pane right-pane d-none d-lg-block">
                     <StudioPanel NotebookId="@NotebookId" />
                 </div>
@@ -98,16 +66,16 @@
                     @if (mobileActiveTab == 0)
                     {
                         <div class="mobile-pane">
-                            <SourcePanel NotebookId="@NotebookId" 
-                                        SourceCount="@(currentNotebook?.SourceCount ?? 0)"
-                                        IsMobile="true" />
+                            <SourcePanel NotebookId="@NotebookId"
+                                         SourceCount="@(currentNotebook?.SourceCount ?? 0)"
+                                         IsMobile="true" />
                         </div>
                     }
                     else if (mobileActiveTab == 2)
                     {
                         <div class="mobile-pane">
-                            <StudioPanel NotebookId="@NotebookId" 
-                                        IsMobile="true" />
+                            <StudioPanel NotebookId="@NotebookId"
+                                         IsMobile="true" />
                         </div>
                     }
                 </div>
@@ -118,15 +86,10 @@
 
 <style>
     .notebook-container {
-        height: 100vh;
+        height: 85vh;
         display: flex;
         flex-direction: column;
-    }
-
-    .desktop-header {
         background-color: var(--mud-palette-background);
-        border-bottom: 1px solid var(--mud-palette-lines-default);
-        flex-shrink: 0;
     }
 
     .three-pane-container {
@@ -134,12 +97,17 @@
         flex: 1;
         height: calc(100vh - 64px);
         overflow: hidden;
+        min-height: 0; /* Important for flexbox scrolling */
     }
 
     .pane {
         height: 100%;
         overflow-y: auto;
         border-right: 1px solid var(--mud-palette-lines-default);
+        background-color: var(--mud-palette-background);
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Important for flexbox scrolling */
     }
 
     .left-pane {
@@ -170,6 +138,9 @@
     .mobile-pane {
         height: calc(100vh - 112px);
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* Important for flexbox scrolling */
     }
 
     /* Scrollbar styling */
@@ -178,7 +149,7 @@
     }
 
     .pane::-webkit-scrollbar-track {
-        background: var(--mud-palette-background);
+        background: transparent;
     }
 
     .pane::-webkit-scrollbar-thumb {
@@ -189,23 +160,4 @@
         .pane::-webkit-scrollbar-thumb:hover {
             background: var(--mud-palette-action-disabled-background);
         }
-
-    /* Responsive adjustments */
-    @@media (max-width: 1280px) {
-        .left-pane {
-            width: 340px;
-            min-width: 340px;
-        }
-
-        .right-pane {
-            width: 280px;
-            min-width: 280px;
-        }
-    }
-
-    @@media (max-width: 960px) {
-        .three-pane-container {
-            height: calc(100vh - 112px);
-        }
-    }
 </style>
