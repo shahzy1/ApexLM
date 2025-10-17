@@ -25,7 +25,7 @@
     <MudMainContent>
         <div class="notebook-container">
             <!-- Desktop Header -->
-             <div class="desktop-header d-none d-lg-block">
+@*              <div class="desktop-header d-none d-lg-block">
                 <MudContainer MaxWidth="MaxWidth.False" Class="px-4">
                     <div class="d-flex align-center gap-4 py-3">
                         <MudIconButton Icon="Icons.Material.Filled.ArrowBack" 
@@ -53,9 +53,9 @@
                 </MudContainer>
                 <MudDivider />
             </div>
-
+ *@
             <!-- Mobile Tab Navigation -->
-            <MudPaper Class="d-lg-none mobile-tabs" Elevation="1">
+            <MudPaper Class="d-lg-none mobile-tabs" Elevation="0">
                 <MudTabs @bind-ActivePanelIndex="mobileActiveTab" Color="Color.Primary" Centered="true"
                          ToolbarClass="mud-tabs-min-width" Application="false">
                     <MudTabPanel Text="Sources">
