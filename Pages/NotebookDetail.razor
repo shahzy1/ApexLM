@@ -62,21 +62,17 @@
                 </div>
 
                 <!-- Mobile Panes -->
-                <div class="d-lg-none">
+                <div class="d-lg-none mobile-panes">
                     @if (mobileActiveTab == 0)
                     {
-                        <div class="mobile-pane">
-                            <SourcePanel NotebookId="@NotebookId"
-                                         SourceCount="@(currentNotebook?.SourceCount ?? 0)"
-                                         IsMobile="true" />
-                        </div>
+                        <SourcePanel NotebookId="@NotebookId"
+                                     SourceCount="@(currentNotebook?.SourceCount ?? 0)"
+                                     IsMobile="true" />
                     }
                     else if (mobileActiveTab == 2)
                     {
-                        <div class="mobile-pane">
-                            <StudioPanel NotebookId="@NotebookId"
-                                         IsMobile="true" />
-                        </div>
+                        <StudioPanel NotebookId="@NotebookId"
+                                     IsMobile="true" />
                     }
                 </div>
             </div>
@@ -85,29 +81,30 @@
 </MudLayout>
 
 <style>
+    /* Reset any default margins/padding */
+    * {
+        box-sizing: border-box;
+    }
+
     .notebook-container {
-        height: 85vh;
+        height: 85vh;       /*only this change remove scroll*/
         display: flex;
         flex-direction: column;
-        background-color: var(--mud-palette-background);
+        overflow: hidden; /* Prevent outer scrolling */
     }
 
     .three-pane-container {
         display: flex;
         flex: 1;
-        height: calc(100vh - 64px);
-        overflow: hidden;
-        min-height: 0; /* Important for flexbox scrolling */
+        overflow: hidden; /* Prevent inner scrolling */
+        height: 100%;
     }
 
     .pane {
-        height: 100%;
-        overflow-y: auto;
-        border-right: 1px solid var(--mud-palette-lines-default);
-        background-color: var(--mud-palette-background);
         display: flex;
         flex-direction: column;
-        min-height: 0; /* Important for flexbox scrolling */
+        overflow: hidden; /* Each pane controls its own overflow */
+        border-right: 1px solid var(--mud-palette-lines-default);
     }
 
     .left-pane {
@@ -130,34 +127,39 @@
 
     .mobile-tabs {
         flex-shrink: 0;
-        position: sticky;
-        top: 0;
-        z-index: 100;
     }
 
-    .mobile-pane {
-        height: calc(100vh - 112px);
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        min-height: 0; /* Important for flexbox scrolling */
+    .mobile-panes {
+        flex: 1;
+        overflow: hidden;
     }
 
-    /* Scrollbar styling */
-    .pane::-webkit-scrollbar {
-        width: 6px;
+    /* Hide scrollbars but keep functionality */
+    .pane {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
     }
 
-    .pane::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .pane::-webkit-scrollbar-thumb {
-        background: var(--mud-palette-action-disabled);
-        border-radius: 3px;
-    }
-
-        .pane::-webkit-scrollbar-thumb:hover {
-            background: var(--mud-palette-action-disabled-background);
+        .pane::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
         }
+
+    /* Responsive adjustments */
+    @@media (max-width: 1280px) {
+        .left-pane {
+            width: 340px;
+            min-width: 340px;
+        }
+
+        .right-pane {
+            width: 280px;
+            min-width: 280px;
+        }
+    }
+
+    @@media (max-width: 960px) {
+        .three-pane-container {
+            height: calc(100vh - 112px);
+        }
+    }
 </style>
