@@ -1,22 +1,227 @@
-﻿@* SourcesPanel.razor *@
-@using MudBlazor
+﻿@using MudBlazor
 
-<MudStack Spacing="2">
-    <MudText Typo="Typo.h6">Sources</MudText>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add">Add</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Search">Discover</MudButton>
+<div class="source-panel @(IsMobile ? "mobile-panel" : "desktop-panel")">
+    <div class="panel-header">
+        <MudText Typo="Typo.h6">Sources</MudText>
+        <div class="header-actions">
+            <MudChip T="string" Variant="Variant.Filled" 
+                    Color="Color.Primary" 
+                    Size="Size.Small">
+                @SourceCount sources
+            </MudChip>
+            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" 
+                         Size="Size.Small" 
+                         Color="Color.Inherit" />
+        </div>
+    </div>
 
-    <MudDivider />
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <MudButton Variant="Variant.Filled" 
+                  Color="Color.Primary" 
+                  Size="Size.Small"
+                  StartIcon="@Icons.Material.Filled.Add"
+                  OnClick="AddSource"
+                  FullWidth="true">
+            Add Source
+        </MudButton>
+    </div>
 
-    <MudList T="string">
-        <MudListItem>
-            <MudCheckBox Checked="true" Label="Analyze Text with Azure AI Search" />
-        </MudListItem>
-        <MudListItem>
-            <MudCheckBox Checked="true" Label="Creating a Question Answering Solution Using Azure" />
-        </MudListItem>
-        <MudListItem>
-            <MudCheckBox Checked="true" Label="کھیل کا شاست کیسے بدل رہا ہے؟" />
-        </MudListItem>
-    </MudList>
-</MudStack>
+    <!-- Sources List -->
+    <div class="sources-list">
+        @if (sources.Any())
+        {
+            @foreach (var source in sources)
+            {
+                <MudCard Class="source-item" OnClick="@(() => OpenSource(source))">
+                    <MudCardContent Class="pa-3">
+                        <div class="d-flex align-center gap-3">
+                            <MudIcon Icon="@GetSourceIcon(source.Type)" 
+                                    Size="Size.Medium" 
+                                    Color="Color.Primary" />
+                            <div class="flex-grow-1 min-width-0">
+                                <MudText Typo="Typo.body1" Class="text-truncate mb-1">
+                                    @source.Name
+                                </MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                    @source.Type • @source.DateAdded
+                                </MudText>
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" 
+                                         Size="Size.Small" 
+                                         Color="Color.Inherit"
+                                         OnClick:stopPropagation="true" />
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            }
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="empty-state">
+                <MudIcon Icon="@Icons.Material.Filled.FolderOpen" 
+                        Size="Size.Large" 
+                        Color="Color.Default" 
+                        Class="mb-3" />
+                <MudText Typo="Typo.body1" Color="Color.Default" Class="mb-2 text-center">
+                    No sources added yet
+                </MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4 text-center">
+                    Add sources to start analyzing your content
+                </MudText>
+                <MudButton Variant="Variant.Outlined" 
+                          Color="Color.Primary" 
+                          Size="Size.Small"
+                          StartIcon="@Icons.Material.Filled.Upload"
+                          OnClick="AddSource"
+                          FullWidth="true">
+                    Upload First Source
+                </MudButton>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string NotebookId { get; set; } = string.Empty;
+
+    [Parameter]
+    public int SourceCount { get; set; }
+
+    [Parameter]
+    public bool IsMobile { get; set; }
+
+    private List<Source> sources = new();
+
+    protected override void OnInitialized()
+    {
+        LoadSampleSources();
+    }
+
+    private void LoadSampleSources()
+    {
+        sources = new List<Source>
+        {
+            new Source { Id = "1", Name = "Research Paper on AI Ethics", Type = SourceType.PDF, DateAdded = "2 days ago" },
+            new Source { Id = "2", Name = "Web Article: Future of Machine Learning", Type = SourceType.Website, DateAdded = "1 week ago" },
+            new Source { Id = "3", Name = "Interview Transcript with AI Researcher", Type = SourceType.Text, DateAdded = "3 days ago" },
+            new Source { Id = "4", Name = "Project Documentation and Specifications", Type = SourceType.Text, DateAdded = "5 days ago" },
+            new Source { Id = "5", Name = "Conference Presentation Slides", Type = SourceType.PDF, DateAdded = "1 week ago" },
+            new Source { Id = "6", Name = "Technical White Paper", Type = SourceType.PDF, DateAdded = "2 weeks ago" }
+        };
+    }
+
+    private void AddSource()
+    {
+        Console.WriteLine($"Adding source to notebook {NotebookId}");
+    }
+
+    private void OpenSource(Source source)
+    {
+        Console.WriteLine($"Opening source: {source.Name}");
+    }
+
+    private string GetSourceIcon(SourceType type)
+    {
+        return type switch
+        {
+            SourceType.PDF => Icons.Material.Filled.PictureAsPdf,
+            SourceType.Website => Icons.Material.Filled.Public,
+            SourceType.Text => Icons.Material.Filled.TextSnippet,
+            SourceType.Video => Icons.Material.Filled.VideoLibrary,
+            SourceType.Audio => Icons.Material.Filled.AudioFile,
+            _ => Icons.Material.Filled.InsertDriveFile
+        };
+    }
+
+    public class Source
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public SourceType Type { get; set; }
+        public string DateAdded { get; set; } = string.Empty;
+    }
+
+    public enum SourceType
+    {
+        PDF,
+        Website,
+        Text,
+        Video,
+        Audio
+    }
+}
+
+<style>
+    .source-panel {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--mud-palette-background);
+    }
+
+    .desktop-panel {
+        padding: 16px;
+    }
+
+    .mobile-panel {
+        padding: 12px;
+    }
+
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-buttons {
+        margin-bottom: 16px;
+    }
+
+    .sources-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .source-item {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        margin-bottom: 8px;
+    }
+
+    .source-item:hover {
+        background-color: var(--mud-palette-action-hover);
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 60%;
+        padding: 20px;
+    }
+
+    .sources-list::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sources-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sources-list::-webkit-scrollbar-thumb {
+        background: var(--mud-palette-action-disabled);
+        border-radius: 2px;
+    }
+</style>

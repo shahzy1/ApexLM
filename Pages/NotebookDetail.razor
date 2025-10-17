@@ -1,47 +1,211 @@
 ﻿@page "/notebookdetail/{NotebookId}"
 @using ApexLM.Services
+@using ApexLM.Components
 @using MudBlazor
 @inject NavigationManager Navigation
 @inject ILayoutService LayoutService
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
-    <!-- Back Button -->
-    <MudButton Variant="Variant.Text" 
-               StartIcon="@Icons.Material.Filled.ArrowBack" 
-               OnClick="GoBack"
-               Class="mb-4">
-        Back to notebooks
-    </MudButton>
+<MudLayout>
+    <!-- Mobile Header -->
+    <MudAppBar Elevation="1" Class="d-lg-none">
+        <MudIconButton Icon="Icons.Material.Filled.ArrowBack" 
+                      Color="Color.Inherit" 
+                      Edge="Edge.Start"
+                      OnClick="GoBack" />
+        <MudSpacer />
+        <MudText Typo="Typo.h6" Class="text-truncate px-2">
+            @currentNotebook?.Title
+        </MudText>
+        <MudSpacer />
+        <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                      Color="Color.Inherit" 
+                      Edge="Edge.End" />
+    </MudAppBar>
 
-    <!-- Notebook Header -->
-    <MudCard Class="mb-6">
-        <MudCardContent>
-            <div class="d-flex justify-space-between align-center">
-                <div>
-                    <MudText Typo="Typo.h4" GutterBottom="true">@currentNotebook?.Title</MudText>
-                    <MudText Typo="Typo.body1" Color="Color.Secondary" Class="mb-2">
-                        @currentNotebook?.Description
-                    </MudText>
-                    <div class="d-flex align-center">
-                        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mr-4">
-                            @currentNotebook?.Date
-                        </MudText>
-                        <MudChip T="string" Variant="Variant.Filled" 
-                                Color="Color.Default" 
-                                Size="Size.Small"
-                                Text="@($"{currentNotebook?.SourceCount} sources")" />
+    <MudMainContent>
+        <div class="notebook-container">
+            <!-- Desktop Header -->
+             <div class="desktop-header d-none d-lg-block">
+                <MudContainer MaxWidth="MaxWidth.False" Class="px-4">
+                    <div class="d-flex align-center gap-4 py-3">
+                        <MudIconButton Icon="Icons.Material.Filled.ArrowBack" 
+                                      Color="Color.Inherit" 
+                                      OnClick="GoBack" />
+                        <div class="flex-grow-1 min-width-0">
+                            <MudText Typo="Typo.h6" Class="text-truncate">@currentNotebook?.Title</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary" Class="text-truncate">
+                                @currentNotebook?.Description
+                            </MudText>
+                        </div>
+                        <div class="d-flex align-center gap-2">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                @currentNotebook?.Date
+                            </MudText>
+                            <MudChip T="string" Variant="Variant.Filled" 
+                                    Color="Color.Default" 
+                                    Size="Size.Small">
+                                @($"{currentNotebook?.SourceCount} sources")
+                            </MudChip>
+                            <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
+                                         Color="Color.Inherit" />
+                        </div>
                     </div>
-                </div>
-                <MudIconButton Icon="Icons.Material.Filled.MoreVert" 
-                             Color="Color.Inherit" />
+                </MudContainer>
+                <MudDivider />
             </div>
-        </MudCardContent>
-    </MudCard>
 
-    <!-- Notebook Content (You can add your notebook layout here) -->
-    <MudText Typo="Typo.h6" Class="mb-4">Notebook Content</MudText>
-    <MudText Color="Color.Secondary">
-        This is where your notebook content would be displayed.
-        You can implement the layout from your previous design here.
-    </MudText>
-</MudContainer>
+            <!-- Mobile Tab Navigation -->
+            <MudPaper Class="d-lg-none mobile-tabs" Elevation="1">
+                <MudTabs @bind-ActivePanelIndex="mobileActiveTab" Color="Color.Primary" Centered="true"
+                         ToolbarClass="mud-tabs-min-width" Application="false">
+                    <MudTabPanel Text="Sources">
+                        <MudIcon Icon="@Icons.Material.Filled.Folder" Class="mr-2" />
+                        Sources
+                    </MudTabPanel>
+                    <MudTabPanel Text="Chat">
+                        <MudIcon Icon="@Icons.Material.Filled.Chat" Class="mr-2" />
+                        Chat
+                    </MudTabPanel>
+                    <MudTabPanel Text="Studio">
+                        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Class="mr-2" />
+                        Studio
+                    </MudTabPanel>
+                </MudTabs>
+            </MudPaper>
+
+            <!-- Three Pane Layout -->
+            <div class="three-pane-container">
+                <!-- Left Pane - Sources (Desktop) -->
+                <div class="pane left-pane d-none d-lg-block">
+                    <SourcePanel NotebookId="@NotebookId" 
+                                SourceCount="@(currentNotebook?.SourceCount ?? 0)" />
+                </div>
+
+                <!-- Middle Pane - Chat -->
+                <div class="pane middle-pane @(mobileActiveTab == 1 ? "d-block" : "d-lg-block")">
+                    <ChatArea NotebookId="@NotebookId" 
+                             NotebookTitle="@currentNotebook?.Title"
+                             IsMobile="false" />
+                </div>
+
+                <!-- Right Pane - Studio (Desktop) -->
+                <div class="pane right-pane d-none d-lg-block">
+                    <StudioPanel NotebookId="@NotebookId" />
+                </div>
+
+                <!-- Mobile Panes -->
+                <div class="d-lg-none">
+                    @if (mobileActiveTab == 0)
+                    {
+                        <div class="mobile-pane">
+                            <SourcePanel NotebookId="@NotebookId" 
+                                        SourceCount="@(currentNotebook?.SourceCount ?? 0)"
+                                        IsMobile="true" />
+                        </div>
+                    }
+                    else if (mobileActiveTab == 2)
+                    {
+                        <div class="mobile-pane">
+                            <StudioPanel NotebookId="@NotebookId" 
+                                        IsMobile="true" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+<style>
+    .notebook-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .desktop-header {
+        background-color: var(--mud-palette-background);
+        border-bottom: 1px solid var(--mud-palette-lines-default);
+        flex-shrink: 0;
+    }
+
+    .three-pane-container {
+        display: flex;
+        flex: 1;
+        height: calc(100vh - 64px);
+        overflow: hidden;
+    }
+
+    .pane {
+        height: 100%;
+        overflow-y: auto;
+        border-right: 1px solid var(--mud-palette-lines-default);
+    }
+
+    .left-pane {
+        width: 380px;
+        min-width: 380px;
+        flex-shrink: 0;
+    }
+
+    .middle-pane {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .right-pane {
+        width: 320px;
+        min-width: 320px;
+        flex-shrink: 0;
+        border-right: none;
+    }
+
+    .mobile-tabs {
+        flex-shrink: 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .mobile-pane {
+        height: calc(100vh - 112px);
+        overflow-y: auto;
+    }
+
+    /* Scrollbar styling */
+    .pane::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .pane::-webkit-scrollbar-track {
+        background: var(--mud-palette-background);
+    }
+
+    .pane::-webkit-scrollbar-thumb {
+        background: var(--mud-palette-action-disabled);
+        border-radius: 3px;
+    }
+
+        .pane::-webkit-scrollbar-thumb:hover {
+            background: var(--mud-palette-action-disabled-background);
+        }
+
+    /* Responsive adjustments */
+    @@media (max-width: 1280px) {
+        .left-pane {
+            width: 340px;
+            min-width: 340px;
+        }
+
+        .right-pane {
+            width: 280px;
+            min-width: 280px;
+        }
+    }
+
+    @@media (max-width: 960px) {
+        .three-pane-container {
+            height: calc(100vh - 112px);
+        }
+    }
+</style>

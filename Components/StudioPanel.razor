@@ -1,24 +1,116 @@
-﻿@* StudioPanel.razor *@
-<MudStack Spacing="2">
-    <MudText Typo="Typo.h6">Studio</MudText>
+﻿@using MudBlazor
 
-    <MudGrid>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center rounded-lg bg-primary text-white">Audio Overview</MudPaper></MudItem>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center rounded-lg bg-secondary text-white">Video Overview</MudPaper></MudItem>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center bg-info text-white">Mind Map</MudPaper></MudItem>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center bg-warning text-white">Reports</MudPaper></MudItem>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center bg-success text-white">Flashcards</MudPaper></MudItem>
-        <MudItem xs="6"><MudPaper Class="p-3 text-center bg-error text-black">Quiz</MudPaper></MudItem>
-    </MudGrid>
+@{
+    var cardClass = $"h-100{(IsMobile ? " mobile-studio-card" : "")}";
+}
 
-    <MudDivider />
+<MudCard Elevation="2" Class="@cardClass">
+    <MudCardContent Class="@(IsMobile ? "pa-3" : "")">
+        <MudText Typo="Typo.h6" Class="mb-3">Studio</MudText>
+        
+        <!-- Studio Features Grid -->
+        <MudGrid Spacing="2">
+            @foreach (var feature in studioFeatures)
+            {
+                <MudItem xs="6" sm="4" md="@(IsMobile ? 6 : 4)">
+                    <MudCard Class="text-center pa-2 feature-card" 
+                            OnClick="@(() => OpenFeature(feature.Type))"
+                            Style="height: 80px;">
+                        <MudCardContent Class="d-flex flex-column justify-center align-center">
+                            <MudIcon Icon="@feature.Icon" 
+                                    Color="Color.Primary" 
+                                    Size="Size.Medium"
+                                    Class="mb-1" />
+                            <MudText Typo="Typo.caption" Class="text-center">
+                                @feature.Name
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
 
-    <MudList T="string">
-        <MudListItem>How to Build an AI Answering Bot</MudListItem>
-        <MudListItem>Briefing: Creating a QA Solution</MudListItem>
-        <MudListItem>Azure AI Search and Text Analysis Lab</MudListItem>
-        <MudListItem>Decoding the Data Flood</MudListItem>
-    </MudList>
+        @if (!IsMobile)
+        {
+            <MudDivider Class="my-4" />
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Add Note</MudButton>
-</MudStack>
+            <!-- Studio Output Section -->
+            <div class="text-center py-4">
+                <MudIcon Icon="@Icons.Material.Filled.FolderSpecial" 
+                        Size="Size.Large" 
+                        Color="Color.Default" 
+                        Class="mb-2" />
+                <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                    Studio output will be saved here.
+                </MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">
+                    Click on any studio feature above to generate content for your notebook.
+                </MudText>
+            </div>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public string NotebookId { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsMobile { get; set; }
+
+    private List<StudioFeature> studioFeatures = new();
+
+    protected override void OnInitialized()
+    {
+        studioFeatures = new List<StudioFeature>
+        {
+            new StudioFeature { Type = FeatureType.AudioOverview, Name = "Audio Overview", Icon = Icons.Material.Filled.AudioFile },
+            new StudioFeature { Type = FeatureType.VideoOverview, Name = "Video Overview", Icon = Icons.Material.Filled.VideoLibrary },
+            new StudioFeature { Type = FeatureType.MindMap, Name = "Mind Map", Icon = Icons.Material.Filled.AccountTree },
+            new StudioFeature { Type = FeatureType.Reports, Name = "Reports", Icon = Icons.Material.Filled.Assessment },
+            new StudioFeature { Type = FeatureType.Flashcards, Name = "Flashcards", Icon = Icons.Material.Filled.Style },
+            new StudioFeature { Type = FeatureType.Outs, Name = "Outs", Icon = Icons.Material.Filled.Output }
+        };
+    }
+
+    private void OpenFeature(FeatureType feature)
+    {
+        Console.WriteLine($"Opening {feature} for notebook {NotebookId}");
+        // Implement feature opening logic
+    }
+
+    public class StudioFeature
+    {
+        public FeatureType Type { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+    }
+
+    public enum FeatureType
+    {
+        AudioOverview,
+        VideoOverview,
+        MindMap,
+        Reports,
+        Flashcards,
+        Outs
+    }
+}
+
+<style>
+    .mobile-studio-card {
+        border-radius: 0;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .feature-card {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .feature-card:hover {
+        background-color: var(--mud-palette-action-hover);
+        transform: translateY(-2px);
+    }
+</style>

@@ -35,7 +35,7 @@
     <!-- ✅ Desktop Layout -->
     <MudContainer MaxWidth="MaxWidth.False" Class="d-none d-md-flex h-100 p-0" Style="margin-top: 50px;">
         <MudPaper Class="p-3 border-end" Style="width: 260px;">
-            <SourcePanel />
+            <SourcePanel1/>
         </MudPaper>
 
         <MudPaper Class="flex-grow-1 p-4 overflow-auto" Elevation="0">
@@ -43,7 +43,7 @@
         </MudPaper>
 
         <MudPaper Class="p-3 border-start" Style="width: 320px;">
-            <StudioPanel />
+            <StudioPanel1 />
         </MudPaper>
     </MudContainer>
 
@@ -52,7 +52,7 @@
         <MudPaper Class="flex-grow-1 p-3 overflow-auto" Elevation="0">
             @if (_activeTab == 0)
             {
-                <SourcePanel />
+                <SourcePanel1 />
             }
             else if (_activeTab == 1)
             {
@@ -60,7 +60,7 @@
             }
             else if (_activeTab == 2)
             {
-                <StudioPanel />
+                <StudioPanel1 />
             }
         </MudPaper>
 

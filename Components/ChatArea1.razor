@@ -1,0 +1,24 @@
+﻿@* ChatArea.razor *@
+
+<MudStack Spacing="3">
+    <MudText Typo="Typo.h5" Class="font-weight-bold">Azure AI Text Analytics for Customer Reviews</MudText>
+    <MudText Typo="Typo.body1">
+        The provided texts consist of two distinct types of documents...
+    </MudText>
+
+    <MudDivider />
+
+    <MudStack Row="true" Spacing="2">
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.VideoLibrary">Video Overview</MudButton>
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AudioFile">Audio Overview</MudButton>
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.AccountTree">Mind Map</MudButton>
+    </MudStack>
+
+    <MudPaper Class="p-2 mt-4" Elevation="0">
+        <MudTextField @bind-Value="_userQuestion" Placeholder="Start typing..." FullWidth="true" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" />
+    </MudPaper>
+</MudStack>
+
+@code {
+    private string _userQuestion;
+}
