@@ -13,5 +13,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddMudServices();
 
 builder.Services.AddScoped<ILayoutService, LayoutService>();
+builder.Services.AddScoped<IFilterStorageService, FilterStorageService>();
 
 await builder.Build().RunAsync();

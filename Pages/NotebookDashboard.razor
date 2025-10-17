@@ -1,8 +1,10 @@
 ﻿@page "/"
+@using ApexLM.Services
 @using ApexLM.Shared
 @using MudBlazor
 @inject NavigationManager Navigation
-@inject IJSRuntime JS
+@inject IFilterStorageService FilterStorage
+@inject ILayoutService LayoutService
 @layout MainLayout
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
@@ -11,16 +13,16 @@
         <div class="d-flex align-center gap-2">
             <!-- Enhanced Filter Buttons with Visual Indicators -->
             <div class="filter-group">
-                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 filter-label">
+                <MudText Typo="Typo.subtitle2" Color="Color.Default" Class="mb-1 filter-label">
                     FILTER BY
                 </MudText>
                 <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary" Class="filter-buttons">
-                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.All))"
-                               Variant="@(currentFilter == NotebookFilter.All ? Variant.Filled : Variant.Outlined)"
-                               Color="@(currentFilter == NotebookFilter.All ? Color.Primary : Color.Inherit)"
-                               Size="Size.Small"
-                               StartIcon="@(currentFilter == NotebookFilter.All ? Icons.Material.Filled.Check : Icons.Material.Filled.FilterList)"
-                               Class="@($"filter-button {(currentFilter == NotebookFilter.All ? "filter-active" : "")}")">
+                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.All))" 
+                              Variant="@(currentFilter == NotebookFilter.All ? Variant.Filled : Variant.Outlined)"
+                              Color="@(currentFilter == NotebookFilter.All ? Color.Primary : Color.Inherit)"
+                              Size="Size.Small"
+                              StartIcon="@(currentFilter == NotebookFilter.All ? Icons.Material.Filled.Check : Icons.Material.Filled.FilterList)"
+                              Class="@($"filter-button {(currentFilter == NotebookFilter.All ? "filter-active" : "")}")">
                         All
                         @if (currentFilter == NotebookFilter.All)
                         {
@@ -29,12 +31,12 @@
                             </MudBadge>
                         }
                     </MudButton>
-                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.Featured))"
-                               Variant="@(currentFilter == NotebookFilter.Featured ? Variant.Filled : Variant.Outlined)"
-                               Color="@(currentFilter == NotebookFilter.Featured ? Color.Primary : Color.Inherit)"
-                               Size="Size.Small"
-                               StartIcon="@(currentFilter == NotebookFilter.Featured ? Icons.Material.Filled.Star : Icons.Material.Outlined.Star)"
-                               Class="@($"filter-button {(currentFilter == NotebookFilter.Featured ? "filter-active" : "")}")">
+                    <MudButton OnClick="@(() => ChangeFilter(NotebookFilter.Featured))" 
+                              Variant="@(currentFilter == NotebookFilter.Featured ? Variant.Filled : Variant.Outlined)"
+                              Color="@(currentFilter == NotebookFilter.Featured ? Color.Primary : Color.Inherit)"
+                              Size="Size.Small"
+                              StartIcon="@(currentFilter == NotebookFilter.Featured ? Icons.Material.Filled.Star : Icons.Material.Outlined.Star)"
+                              Class="@($"filter-button {(currentFilter == NotebookFilter.Featured ? "filter-active" : "")}")">
                         Featured
                         @if (currentFilter == NotebookFilter.Featured)
                         {
@@ -46,40 +48,75 @@
                 </MudButtonGroup>
             </div>
         </div>
-
-        <div class="d-flex align-center gap-2">
-            <!-- Enhanced View Toggle with Visual Indicators -->
+        
+        <div class="d-flex align-center gap-2" style="align-items: flex-end;">
+            <!-- Enhanced View Toggle with Clear Visual Indicators -->
             <div class="view-group">
-                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 view-label">
+                <MudText Typo="Typo.subtitle2" Color="Color.Default" Class="mb-1 view-label">
                     VIEW
                 </MudText>
                 <MudButtonGroup Variant="Variant.Outlined" Color="Color.Primary" Class="view-buttons">
-                    <MudButton OnClick="@(() => ChangeView(LayoutView.Card))"
-                               Variant="@(currentView == LayoutView.Card ? Variant.Filled : Variant.Outlined)"
-                               Color="@(currentView == LayoutView.Card ? Color.Primary : Color.Inherit)"
-                               StartIcon="@Icons.Material.Filled.ViewModule"
-                               Size="Size.Small"
-                               Class="@($"view-button {(currentView == LayoutView.Card ? "view-active" : "")}")">
+                    <MudButton OnClick="@(() => ChangeView(LayoutView.Card))" 
+                              Variant="@(currentView == LayoutView.Card ? Variant.Filled : Variant.Outlined)"
+                              Color="@(currentView == LayoutView.Card ? Color.Primary : Color.Inherit)"
+                              StartIcon="@Icons.Material.Filled.ViewModule"
+                              Size="Size.Small"
+                              Class="@($"view-button {(currentView == LayoutView.Card ? "view-active" : "view-inactive")}")"
+                              Style="@(currentView == LayoutView.Card ? "border: 2px solid var(--mud-palette-primary);" : "")">
                         Card
+                        @if (currentView == LayoutView.Card)
+                        {
+                            <MudBadge Color="Color.Primary" Size="Size.Small" Class="ml-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                            </MudBadge>
+                        }
                     </MudButton>
-                    <MudButton OnClick="@(() => ChangeView(LayoutView.List))"
-                               Variant="@(currentView == LayoutView.List ? Variant.Filled : Variant.Outlined)"
-                               Color="@(currentView == LayoutView.List ? Color.Primary : Color.Inherit)"
-                               StartIcon="@Icons.Material.Filled.ViewList"
-                               Size="Size.Small"
-                               Class="@($"view-button {(currentView == LayoutView.List ? "view-active" : "")}")">
+                    <MudButton OnClick="@(() => ChangeView(LayoutView.List))" 
+                              Variant="@(currentView == LayoutView.List ? Variant.Filled : Variant.Outlined)"
+                              Color="@(currentView == LayoutView.List ? Color.Primary : Color.Inherit)"
+                              StartIcon="@Icons.Material.Filled.ViewList"
+                              Size="Size.Small"
+                              Class="@($"view-button {(currentView == LayoutView.List ? "view-active" : "view-inactive")}")"
+                              Style="@(currentView == LayoutView.List ? "border: 2px solid var(--mud-palette-primary);" : "")">
                         List
+                        @if (currentView == LayoutView.List)
+                        {
+                            <MudBadge Color="Color.Primary" Size="Size.Small" Class="ml-1">
+                                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" />
+                            </MudBadge>
+                        }
                     </MudButton>
                 </MudButtonGroup>
             </div>
             
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.Add"
-                       OnClick="CreateNewNotebook"
-                       Size="Size.Small">
-                Create new notebook
-            </MudButton>
+            <!-- Create New Notebook Button aligned with view buttons -->
+            <div class="create-group">
+                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 create-label" Style="visibility: hidden;">
+                    ACTION
+                </MudText>
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Default" 
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="CreateNewNotebook"
+                           Size="Size.Small"
+                           Class="create-button">
+                    Create new notebook
+                </MudButton>
+            </div>
+
+            <!-- Clear Filters Button aligned with view buttons -->
+            <div class="clear-group">
+                <MudText Typo="Typo.subtitle2" Color="Color.Secondary" Class="mb-1 clear-label" Style="visibility: hidden;">
+                    CLEAR
+                </MudText>
+                <MudTooltip Text="Clear all filter preferences">
+                    <MudIconButton Icon="@Icons.Material.Filled.Clear" 
+                                 Color="Color.Inherit" 
+                                 Size="Size.Small"
+                                 OnClick="ClearAllFilters"
+                                 Class="clear-button" />
+                </MudTooltip>
+            </div>
         </div>
     </div>
 
@@ -89,14 +126,14 @@
             <div class="d-flex align-center gap-3">
                 <MudChip T="string" 
                          Variant="Variant.Filled" 
-                         Color="Color.Primary"
+                         Color="Color.Tertiary"
                          Size="Size.Small"
                          Icon="@GetFilterIcon(currentFilter)"
                          Text="@GetFilterText(currentFilter)" />
                 
                 <MudChip T="string" 
                          Variant="Variant.Filled" 
-                         Color="Color.Secondary"
+                         Color="Color.Tertiary"
                          Size="Size.Small"
                          Icon="@GetViewIcon(currentView)"
                          Text="@($"{currentView} View")" />
@@ -122,9 +159,17 @@
                 }
             </div>
             
-            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                Showing @GetTotalDisplayedCount() notebooks
-            </MudText>
+            <div class="d-flex align-center gap-2">
+                <MudText Typo="Typo.body2" Color="Color.Tertiary">
+                    Showing @GetTotalDisplayedCount() notebooks
+                </MudText>
+                <MudTooltip Text="Reload filter states from storage">
+                    <MudIconButton Icon="@Icons.Material.Filled.Refresh" 
+                                 Size="Size.Small" 
+                                 Color="Color.Inherit"
+                                 OnClick="RefreshFilters" />
+                </MudTooltip>
+            </div>
         </div>
     </MudPaper>
 
@@ -186,9 +231,8 @@
                                         </MudText>
                                         <MudChip T="string" Variant="Variant.Filled" 
                                                 Color="Color.Tertiary" 
-                                                Size="Size.Small">
-                                            @($"{notebook.SourceCount} sources")
-                                        </MudChip>
+                                                Size="Size.Small"
+                                                Text="@($"{notebook.SourceCount} sources")" />
                                     </div>
                                 </MudCardContent>
                             </MudCard>
@@ -211,11 +255,10 @@
                                 <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
                                 <div class="d-flex align-center justify-space-between mt-1">
                                     <MudText Typo="Typo.caption" Color="Color.Default">@notebook.Date</MudText>
-                                    <MudChip Variant="Variant.Filled" 
+                                    <MudChip T="string" Variant="Variant.Filled" 
                                             Color="Color.Tertiary" 
-                                            Size="Size.Small">
-                                        @($"{notebook.SourceCount} sources")
-                                    </MudChip>
+                                            Size="Size.Small"
+                                            Text="@($"{notebook.SourceCount} sources")" />
                                 </div>
                             </MudListItem>
                         }
@@ -325,9 +368,8 @@
                                         </MudText>
                                         <MudChip T="string" Variant="Variant.Filled" 
                                                 Color="Color.Tertiary" 
-                                                Size="Size.Small">
-                                            @($"{notebook.SourceCount} sources")
-                                        </MudChip>
+                                                Size="Size.Small"
+                                                Text="@($"{notebook.SourceCount} sources")" />
                                     </div>
                                 </MudCardContent>
                             </MudCard>
@@ -350,11 +392,10 @@
                                 <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
                                 <div class="d-flex align-center justify-space-between mt-1">
                                     <MudText Typo="Typo.caption" Color="Color.Default">@notebook.Date</MudText>
-                                    <MudChip Variant="Variant.Filled" 
+                                    <MudChip T="string" Variant="Variant.Filled" 
                                             Color="Color.Tertiary" 
-                                            Size="Size.Small">
-                                        @($"{notebook.SourceCount} sources")
-                                    </MudChip>
+                                            Size="Size.Small"
+                                            Text="@($"{notebook.SourceCount} sources")" />
                                 </div>
                             </MudListItem>
                         }
@@ -378,42 +419,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadFilterStates();
+        // Set page title
+        LayoutService.SetTitle("ApexLM");
+        
+        await LoadAllFilterStates();
         LoadSampleData();
         UpdateDisplayedNotebooks();
         _isInitialized = true;
     }
 
-    private async Task LoadFilterStates()
+    protected override void OnParametersSet()
+    {
+        // Ensure title is set when parameters change
+        LayoutService.SetTitle("ApexLM");
+    }
+
+    private async Task LoadAllFilterStates()
     {
         try
         {
-            // Load filter state
-            var storedFilter = await JS.InvokeAsync<string>("localStorage.getItem", "notebookFilter");
-            if (!string.IsNullOrEmpty(storedFilter) && Enum.TryParse<NotebookFilter>(storedFilter, out var filter))
-            {
-                currentFilter = filter;
-            }
-
-            // Load view state
-            var storedView = await JS.InvokeAsync<string>("localStorage.getItem", "notebookView");
-            if (!string.IsNullOrEmpty(storedView) && Enum.TryParse<LayoutView>(storedView, out var view))
-            {
-                currentView = view;
-            }
-
-            // Load expansion states
-            var storedShowAllFeatured = await JS.InvokeAsync<string>("localStorage.getItem", "showAllFeatured");
-            if (!string.IsNullOrEmpty(storedShowAllFeatured) && bool.TryParse(storedShowAllFeatured, out var showFeatured))
-            {
-                showAllFeatured = showFeatured;
-            }
-
-            var storedShowAllRecent = await JS.InvokeAsync<string>("localStorage.getItem", "showAllRecent");
-            if (!string.IsNullOrEmpty(storedShowAllRecent) && bool.TryParse(storedShowAllRecent, out var showRecent))
-            {
-                showAllRecent = showRecent;
-            }
+            // Load all filter states using the service
+            currentFilter = await FilterStorage.LoadFilterState("notebookFilter", NotebookFilter.All);
+            currentView = await FilterStorage.LoadFilterState("notebookView", LayoutView.Card);
+            showAllFeatured = await FilterStorage.LoadFilterState("showAllFeatured", false);
+            showAllRecent = await FilterStorage.LoadFilterState("showAllRecent", false);
+            
+            Console.WriteLine($"Loaded filters - Filter: {currentFilter}, View: {currentView}, ShowAllFeatured: {showAllFeatured}, ShowAllRecent: {showAllRecent}");
         }
         catch (Exception ex)
         {
@@ -421,95 +452,89 @@
         }
     }
 
-    private async Task SaveFilterState(string key, string value)
-    {
-        try
-        {
-            await JS.InvokeVoidAsync("localStorage.setItem", key, value);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error saving filter state: {ex.Message}");
-        }
-    }
-
-    private void ChangeFilter(NotebookFilter filter)
+    private async Task ChangeFilter(NotebookFilter filter)
     {
         currentFilter = filter;
-        _ = SaveFilterState("notebookFilter", filter.ToString());
-
+        await FilterStorage.SaveFilterState("notebookFilter", filter);
+        
         // Reset expansion states when switching filters
         if (filter == NotebookFilter.All)
         {
             showAllFeatured = false;
             showAllRecent = false;
-            _ = SaveFilterState("showAllFeatured", "false");
-            _ = SaveFilterState("showAllRecent", "false");
+            await FilterStorage.SaveFilterState("showAllFeatured", false);
+            await FilterStorage.SaveFilterState("showAllRecent", false);
         }
         else
         {
             showAllFeatured = false;
-            _ = SaveFilterState("showAllFeatured", "false");
+            await FilterStorage.SaveFilterState("showAllFeatured", false);
         }
+        
         UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
-    private void ChangeView(LayoutView newView)
+    private async Task ChangeView(LayoutView newView)
     {
         currentView = newView;
-        _ = SaveFilterState("notebookView", newView.ToString());
+        await FilterStorage.SaveFilterState("notebookView", newView);
+        StateHasChanged();
     }
 
-    private void ShowAllFeatured()
+    private async Task ShowAllFeatured()
     {
         showAllFeatured = true;
-        _ = SaveFilterState("showAllFeatured", "true");
+        await FilterStorage.SaveFilterState("showAllFeatured", true);
         UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
-    private void ShowLessFeatured()
+    private async Task ShowLessFeatured()
     {
         showAllFeatured = false;
-        _ = SaveFilterState("showAllFeatured", "false");
+        await FilterStorage.SaveFilterState("showAllFeatured", false);
         UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
-    private void ShowAllRecent()
+    private async Task ShowAllRecent()
     {
         showAllRecent = true;
-        _ = SaveFilterState("showAllRecent", "true");
+        await FilterStorage.SaveFilterState("showAllRecent", true);
         UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
-    private void ShowLessRecent()
+    private async Task ShowLessRecent()
     {
         showAllRecent = false;
-        _ = SaveFilterState("showAllRecent", "false");
+        await FilterStorage.SaveFilterState("showAllRecent", false);
         UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
-    // Clear all filter states (optional method)
-    private async Task ClearFilterStates()
+    private async Task ClearAllFilters()
     {
-        try
-        {
-            await JS.InvokeVoidAsync("localStorage.removeItem", "notebookFilter");
-            await JS.InvokeVoidAsync("localStorage.removeItem", "notebookView");
-            await JS.InvokeVoidAsync("localStorage.removeItem", "showAllFeatured");
-            await JS.InvokeVoidAsync("localStorage.removeItem", "showAllRecent");
+        await FilterStorage.ClearAllFilterStates();
+        
+        // Reset to defaults
+        currentFilter = NotebookFilter.All;
+        currentView = LayoutView.Card;
+        showAllFeatured = false;
+        showAllRecent = false;
+        
+        UpdateDisplayedNotebooks();
+        StateHasChanged();
+        
+        Console.WriteLine("All filters cleared and reset to defaults");
+    }
 
-            // Reset to defaults
-            currentFilter = NotebookFilter.All;
-            currentView = LayoutView.Card;
-            showAllFeatured = false;
-            showAllRecent = false;
-            UpdateDisplayedNotebooks();
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error clearing filter states: {ex.Message}");
-        }
+    private async Task RefreshFilters()
+    {
+        await LoadAllFilterStates();
+        UpdateDisplayedNotebooks();
+        StateHasChanged();
     }
 
     // Helper methods for visual indicators
@@ -553,7 +578,6 @@
         };
     }
 
-    // Your existing methods remain the same
     private void LoadSampleData()
     {
         // Featured notebooks
@@ -582,12 +606,12 @@
 
     private void UpdateDisplayedNotebooks()
     {
-        displayedFeaturedNotebooks = showAllFeatured
-            ? featuredNotebooks
+        displayedFeaturedNotebooks = showAllFeatured 
+            ? featuredNotebooks 
             : featuredNotebooks.Take(5).ToList();
 
-        displayedRecentNotebooks = showAllRecent
-            ? recentNotebooks
+        displayedRecentNotebooks = showAllRecent 
+            ? recentNotebooks 
             : recentNotebooks.Take(5).ToList();
     }
 
@@ -630,51 +654,118 @@
 }
 
 <style>
-    /* Filter and View Group Styling */
-    .filter-group, .view-group {
+    .filter-group, .view-group, .create-group, .clear-group {
         display: flex;
         flex-direction: column;
+        height: 100%;
     }
 
-    .filter-label, .view-label {
+    .filter-label, .view-label, .create-label, .clear-label {
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        height: 20px;
+        display: flex;
+        align-items: flex-end;
     }
 
-    /* Active State Styling */
-    .filter-active {
-        font-weight: 600;
-        transform: scale(1.02);
-        transition: all 0.2s ease-in-out;
+    /* Enhanced View Button Styling */
+    .view-buttons {
+        display: flex;
+        height: 40px;
+        position: relative;
     }
 
     .view-active {
-        font-weight: 600;
-        transform: scale(1.02);
+        font-weight: 700;
+        background-color: var(--mud-palette-primary) !important;
+        color: var(--mud-palette-primary-text) !important;
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        z-index: 2;
+        position: relative;
+    }
+
+    .view-inactive {
+        background-color: var(--mud-palette-background);
+        color: var(--mud-palette-text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .view-active .mud-icon {
+        color: var(--mud-palette-primary-text) !important;
+    }
+
+    .view-inactive:hover {
+        background-color: var(--mud-palette-action-hover);
+        transform: translateY(-1px);
+    }
+
+    /* Check badge styling */
+    .view-active .mud-badge {
+        background-color: var(--mud-palette-primary-text) !important;
+    }
+
+        .view-active .mud-badge .mud-icon {
+            color: var(--mud-palette-primary) !important;
+            font-size: 0.75rem;
+        }
+
+    /* Filter button styling */
+    .filter-buttons {
+        display: flex;
+        height: 40px;
+    }
+
+    .filter-active {
+        font-weight: 700;
+        background-color: var(--mud-palette-primary) !important;
+        color: var(--mud-palette-primary-text) !important;
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .filter-button:hover, .view-button:hover, .create-button:hover {
+        transform: translateY(-1px);
         transition: all 0.2s ease-in-out;
     }
 
-    /* Active Filter Indicator */
+    .create-button, .clear-button {
+        height: 40px;
+    }
+
     .active-filter-indicator {
         background-color: var(--mud-palette-background);
         border-left: 4px solid var(--mud-palette-primary);
         animation: slideIn 0.3s ease-out;
     }
 
-    /* Button Hover Effects */
-    .filter-button:hover, .view-button:hover {
-        transform: translateY(-1px);
+    .clickable-content {
+        cursor: pointer;
         transition: all 0.2s ease-in-out;
+        height: 100%;
     }
 
-    /* Badge Styling */
-    .mud-badge {
-        font-size: 0.7rem;
-        font-weight: 600;
+        .clickable-content:hover {
+            background-color: var(--mud-palette-action-hover);
+        }
+
+    .mud-card {
+        border-radius: 8px;
     }
 
-    /* Animation */
+    .mud-list-item {
+        cursor: pointer;
+    }
+
+        .mud-list-item:hover {
+            background-color: var(--mud-palette-action-hover);
+        }
+
+    .gap-2 {
+        gap: 8px;
+    }
+
     @@keyframes slideIn {
         from {
             opacity: 0;
@@ -687,24 +778,91 @@
         }
     }
 
-    /* Responsive Design */
-    @@media (max-width: 960px) {
+    @@keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(var(--mud-palette-primary-rgb), 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 6px rgba(var(--mud-palette-primary-rgb), 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(var(--mud-palette-primary-rgb), 0);
+        }
+    }
+
+    /* Improved responsive design */
+    @@media (max-width: 1200px) {
         .d-flex.justify-space-between {
             flex-direction: column;
             align-items: flex-start;
-            gap: 16px;
+            gap: 24px;
         }
 
-        .filter-group, .view-group {
+        .filter-group, .view-group, .create-group, .clear-group {
             width: 100%;
         }
 
         .filter-buttons, .view-buttons {
             width: 100%;
+            justify-content: flex-start;
         }
 
         .filter-button, .view-button {
             flex: 1;
+            max-width: 150px;
         }
+
+        .create-group, .clear-group {
+            align-items: flex-start;
+        }
+
+        .create-button {
+            width: auto;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .filter-group, .view-group, .create-group, .clear-group {
+            align-items: stretch;
+        }
+
+        .filter-buttons, .view-buttons {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .filter-button, .view-button {
+            max-width: none;
+        }
+
+        .create-button {
+            width: 100%;
+        }
+
+        .d-flex.align-center.gap-2 {
+            width: 100%;
+            gap: 16px;
+        }
+    }
+
+    /* Ensure consistent spacing */
+    .mud-button-group .mud-button {
+        margin: 0;
+    }
+
+    .mud-button {
+        border-radius: 0;
+    }
+
+    .mud-button-group .mud-button:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    .mud-button-group .mud-button:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 </style>
