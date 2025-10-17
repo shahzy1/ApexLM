@@ -1,35 +1,47 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ApexLM.Shared;
+using Microsoft.AspNetCore.Components;
 
 namespace ApexLM.Pages
 {
     public partial class NotebookDetail
     {
-        [Parameter]
-        public string NotebookId { get; set; } = string.Empty;
+        [Parameter] public string NotebookId { get; set; } = string.Empty;
 
         private Notebook? currentNotebook;
 
-        protected override void OnParametersSet()
+        protected override async Task OnParametersSetAsync()
         {
-            LoadNotebook();
+            await LoadNotebook();
         }
 
-        private void LoadNotebook()
+        private async Task LoadNotebook()
         {
-            // In a real app, you would fetch the notebook from a service/database
-            // For now, we'll use sample data
-            var allNotebooks = GetSampleNotebooks();
-            currentNotebook = allNotebooks.FirstOrDefault(n => n.Id == NotebookId);
-
-            if (currentNotebook == null)
+            try
             {
-                // Handle not found - you might want to navigate to a 404 page
+                var allNotebooks = GetSampleNotebooks();
+                currentNotebook = allNotebooks.FirstOrDefault(n => n.Id == NotebookId);
+
+                if (currentNotebook == null)
+                {
+                    // Notebook not found, redirect to home
+                    Navigation.NavigateTo("/");
+                    return;
+                }
+
+                // Update title using service
+                LayoutService.SetTitle(currentNotebook.Title);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading notebook: {ex.Message}");
                 Navigation.NavigateTo("/");
             }
         }
 
         private void GoBack()
         {
+            LayoutService.SetTitle("Notebooks");
             Navigation.NavigateTo("/");
         }
 
