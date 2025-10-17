@@ -15,3 +15,14 @@ window.themeStorage = {
         return localStorage.getItem("apexlm-theme");
     }
 };
+
+// System theme detection
+window.getSystemThemePreference = function () {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+};
+
+// Listen for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+    // You can optionally trigger theme updates when system preference changes
+    console.log('System theme changed to:', e.matches ? 'dark' : 'light');
+});

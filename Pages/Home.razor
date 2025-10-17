@@ -1,6 +1,9 @@
 ﻿@page "/"
+@using ApexLM.Shared
 @using MudBlazor
+
 @inject NavigationManager Navigation
+@layout MainLayout
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
     <!-- Header with Filter Buttons, Create Button and View Toggle -->
@@ -65,7 +68,7 @@
                 @if (featuredNotebooks.Count > 5 && !showAllFeatured)
                 {
                     <MudButton Variant="Variant.Text" 
-                              Color="Color.Primary" 
+                              Color="Color.Primary"
                               OnClick="ShowAllFeatured"
                               EndIcon="@Icons.Material.Filled.ExpandMore"
                               Size="Size.Small">
@@ -74,8 +77,8 @@
                 }
                 else if (featuredNotebooks.Count > 5 && showAllFeatured)
                 {
-                    <MudButton Variant="Variant.Text" 
-                              Color="Color.Primary" 
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
                               OnClick="ShowLessFeatured"
                               EndIcon="@Icons.Material.Filled.ExpandLess"
                               Size="Size.Small">
@@ -101,15 +104,15 @@
                                                      OnClick="@(() => HandleMenuClick(notebook))"
                                                      OnClick:stopPropagation="true" />
                                     </div>
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                    <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-2">
                                         @notebook.Description
                                     </MudText>
                                     <div class="d-flex align-center justify-space-between mt-3">
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                        <MudText Typo="Typo.caption" Color="Color.Default">
                                             @notebook.Date
                                         </MudText>
                                         <MudChip T="string" Variant="Variant.Filled" 
-                                                Color="Color.Default" 
+                                                Color="Color.Tertiary" 
                                                 Size="Size.Small">
                                             @($"{notebook.SourceCount} sources")
                                         </MudChip>
@@ -132,11 +135,11 @@
                                         OnClick="@(() => OpenNotebook(notebook.Id))"
                                         Icon="@Icons.Material.Filled.Note">
                                 <MudText Typo="Typo.h6">@notebook.Title</MudText>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
                                 <div class="d-flex align-center justify-space-between mt-1">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Default">@notebook.Date</MudText>
                                     <MudChip Variant="Variant.Filled" 
-                                            Color="Color.Default" 
+                                            Color="Color.Tertiary" 
                                             Size="Size.Small">
                                         @($"{notebook.SourceCount} sources")
                                     </MudChip>
@@ -203,8 +206,8 @@
                 
                 @if (featuredNotebooks.Count > 5 && !showAllFeatured)
                 {
-                    <MudButton Variant="Variant.Text" 
-                              Color="Color.Primary" 
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
                               OnClick="ShowAllFeatured"
                               EndIcon="@Icons.Material.Filled.ExpandMore"
                               Size="Size.Small">
@@ -213,8 +216,8 @@
                 }
                 else if (featuredNotebooks.Count > 5 && showAllFeatured)
                 {
-                    <MudButton Variant="Variant.Text" 
-                              Color="Color.Primary" 
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
                               OnClick="ShowLessFeatured"
                               EndIcon="@Icons.Material.Filled.ExpandLess"
                               Size="Size.Small">
@@ -240,15 +243,15 @@
                                                      OnClick="@(() => HandleMenuClick(notebook))"
                                                      OnClick:stopPropagation="true" />
                                     </div>
-                                    <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-2">
+                                    <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-2">
                                         @notebook.Description
                                     </MudText>
                                     <div class="d-flex align-center justify-space-between mt-3">
-                                        <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                        <MudText Typo="Typo.caption" Color="Color.Default">
                                             @notebook.Date
                                         </MudText>
                                         <MudChip T="string" Variant="Variant.Filled" 
-                                                Color="Color.Default" 
+                                                Color="Color.Tertiary" 
                                                 Size="Size.Small">
                                             @($"{notebook.SourceCount} sources")
                                         </MudChip>
@@ -271,11 +274,11 @@
                                         OnClick="@(() => OpenNotebook(notebook.Id))"
                                         Icon="@Icons.Material.Filled.Note">
                                 <MudText Typo="Typo.h6">@notebook.Title</MudText>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary">@notebook.Description</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
                                 <div class="d-flex align-center justify-space-between mt-1">
-                                    <MudText Typo="Typo.caption" Color="Color.Secondary">@notebook.Date</MudText>
+                                    <MudText Typo="Typo.caption" Color="Color.Default">@notebook.Date</MudText>
                                     <MudChip Variant="Variant.Filled" 
-                                            Color="Color.Default" 
+                                            Color="Color.Tertiary" 
                                             Size="Size.Small">
                                         @($"{notebook.SourceCount} sources")
                                     </MudChip>
@@ -290,7 +293,6 @@
 </MudContainer>
 
 @code {
-
     private List<Notebook> featuredNotebooks = new();
     private List<Notebook> recentNotebooks = new();
     private List<Notebook> displayedFeaturedNotebooks = new();
