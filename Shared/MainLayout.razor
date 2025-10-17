@@ -7,12 +7,14 @@
 @implements IDisposable
 
 <MudThemeProvider Theme="@_currentTheme" IsDarkMode="@_isDarkMode" />
+
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout Class="h-screen bg-grey-light">
-    <MudAppBar Color="Color.Primary" Elevation="1">
+<MudLayout>
+    <!-- AppBar with consistent color -->
+    <MudAppBar Elevation="0" Color="Color.Transparent" Class="theme-line">
         <MudLink Href="/">
             <MudImage Src="/assets/logo_FM.png"
                       Alt="Tanolis logo"
@@ -24,7 +26,6 @@
 
         <MudText Typo="Typo.h5" Class="ml-1" Color="Color.Inherit">@PageTitle</MudText>
         <MudSpacer />
-
         <MudIconButton Icon="@(_isDarkMode? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                        OnClick="ToggleTheme"
                        Title="Toggle Light/Dark Mode" />
@@ -34,6 +35,7 @@
                        Edge="Edge.End" />
     </MudAppBar>
 
+    <!-- Themed content area -->
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
             @Body
@@ -82,6 +84,7 @@
 
     protected override void OnInitialized()
     {
+        LayoutService.SetDefaultTitle();
         LayoutService.OnTitleChanged += HandleTitleChanged;
     }
 
@@ -106,6 +109,12 @@
         await LoadTheme();
         _isInitialized = true;
         StateHasChanged();
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Also set title when parameters change (like when navigating back)
+        LayoutService.SetDefaultTitle();
     }
 
     private async Task LoadTheme()
@@ -153,3 +162,11 @@
         LayoutService.OnTitleChanged -= HandleTitleChanged;
     }
 }
+
+<style>
+    /* AppBar stays consistent regardless of content theme */
+    .theme-line {
+        border-bottom: 1px solid var(--mud-palette-text-primary) !important;
+        background-color: transparent !important;
+    }
+</style>
