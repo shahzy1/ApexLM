@@ -33,7 +33,7 @@
         {
             @foreach (var source in sources)
             {
-                <MudCard Class="source-item" OnClick="@(() => OpenSource(source))">
+                <MudCard Class="source-item" @onclick="@(() => OpenSource(source))">
                     <MudCardContent Class="pa-3">
                         <div class="d-flex align-center gap-3">
                             <MudIcon Icon="@GetSourceIcon(source.Type)" 
@@ -77,6 +77,8 @@
                           OnClick="AddSource"
                           FullWidth="true">
                     Upload First Source
+                    Saved sources will appear here
+                    Click Add source above to add PDFs, websites, text, videos, or audio files. Or import a file directly from Google Drive.
                 </MudButton>
             </div>
         }
