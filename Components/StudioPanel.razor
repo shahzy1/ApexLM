@@ -13,9 +13,9 @@
             @foreach (var feature in studioFeatures)
             {
                 <MudItem xs="6" sm="4" md="@(IsMobile ? 6 : 4)">
-                    <MudCard Class="text-center pa-2 feature-card" 
-                            OnClick="@(() => OpenFeature(feature.Type))"
-                            Style="height: 100px;">
+                    <MudCard Class="text-center pa-2 feature-card"
+                             @onclick="async () => await OpenFeature(feature.Type)"
+                             Style="height: 100px;">
                         <MudCardContent Class="d-flex flex-column justify-center align-center">
                             <MudIcon Icon="@feature.Icon" 
                                     Color="Color.Primary" 
@@ -41,27 +41,38 @@
                         Color="Color.Default" 
                         Class="mb-2" />
                 <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-2">
-                    Studio output will be saved here.
+                    @StudioOutput
                 </MudText>
                 <MudText Typo="Typo.caption" Color="Color.Default">
                     Click on any studio feature above to generate content for your notebook.
                 </MudText>
             </div>
         }
+
+        <MudButton OnClick="OnAddNote"
+                   Variant="Variant.Filled"
+                   Size="Size.Small"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Color="Color.Default">
+            Add Note
+        </MudButton>
+
     </MudCardContent>
 </MudCard>
 
 @code {
-    [Parameter]
-    public string NotebookId { get; set; } = string.Empty;
+    [Parameter] public string NotebookId { get; set; } = string.Empty;
 
-    [Parameter]
-    public bool IsMobile { get; set; }
+    [Parameter] public bool IsMobile { get; set; }
+
+    [Parameter] public EventCallback<string> OnFeatureClick { get; set; } // Add this
 
     private List<StudioFeature> studioFeatures = new();
 
     protected override void OnInitialized()
     {
+        Console.WriteLine($"🔧 StudioPanel Initialized - NotebookId: {NotebookId}, IsMobile: {IsMobile}");
+
         studioFeatures = new List<StudioFeature>
         {
             new StudioFeature { Type = FeatureType.AudioOverview, Name = "Audio Overview", Icon = Icons.Material.Filled.AudioFile },
@@ -72,10 +83,73 @@
         };
     }
 
-    private void OpenFeature(FeatureType feature)
+    private void OnAddNote()
     {
-        Console.WriteLine($"Opening {feature} for notebook {NotebookId}");
+        Console.WriteLine("Add Note button clicked");
+    }
+
+    private string StudioOutput = "Studio output will be saved here.";
+
+    private void NewStudioOutput(string newOutput)
+    {
+        if (!string.IsNullOrEmpty(newOutput))
+        {
+            // Append the new output as a single sentence
+            if (StudioOutput == "Studio output will be saved here.")
+            {
+                // Replace the default message with the first output
+                StudioOutput = newOutput;
+            }
+            else
+            {
+                // Append the new output as a new sentence
+                StudioOutput += $"\n{newOutput}";
+            }
+
+            Console.WriteLine($"Studio output updated: {StudioOutput}");
+        }
+
+        // Logic to handle the new output from studio features
+        Console.WriteLine($"New output received: {newOutput}");
+    }
+
+    private async Task OpenFeature(FeatureType feature)
+    {
+        Console.WriteLine($"🎯 StudioPanel: Opening {feature} for notebook {NotebookId}");
+
+        // Keep existing logic
         // Implement feature opening logic
+        switch (feature)
+        {
+            case FeatureType.AudioOverview:
+
+                Console.WriteLine($"🎵 AUDIO OVERVIEW: Generating audio summary for notebook {NotebookId}");
+                NewStudioOutput($"🎵 AUDIO OVERVIEW: Generating audio summary for notebook {NotebookId}");
+                break;
+            case FeatureType.VideoOverview:
+                Console.WriteLine($"🎥 VIDEO OVERVIEW: Creating video content for notebook {NotebookId}");
+                NewStudioOutput($"🎥 VIDEO OVERVIEW: Creating video content for notebook {NotebookId}");
+                break;
+            case FeatureType.MindMap:
+                Console.WriteLine($"🗺️ MIND MAP: Building knowledge map for notebook {NotebookId}");
+                NewStudioOutput($"🗺️ MIND MAP: Building knowledge map for notebook {NotebookId}");
+                break;
+            case FeatureType.Reports:
+                Console.WriteLine($"📊 REPORTS: Generating analytical reports for notebook {NotebookId}");
+                NewStudioOutput($"📊 REPORTS: Generating analytical reports for notebook {NotebookId}");
+                break;
+            case FeatureType.Flashcards:
+                Console.WriteLine($"📇 FLASHCARDS: Creating study cards for notebook {NotebookId}");
+                NewStudioOutput($"📇 FLASHCARDS: Creating study cards for notebook {NotebookId}");
+                break;
+        }
+
+        // Notify parent component about the status
+        if (OnFeatureClick.HasDelegate)
+        {
+            await OnFeatureClick.InvokeAsync(feature.ToString());
+        }
+
     }
 
     public class StudioFeature

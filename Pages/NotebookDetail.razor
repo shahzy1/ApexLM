@@ -1,4 +1,6 @@
-﻿@page "/notebookdetail/{NotebookId}"
+﻿@* NotebookDetail page *@
+
+@page "/notebookdetail/{NotebookId}"
 @using ApexLM.Services
 @using ApexLM.Components
 @using MudBlazor
@@ -8,11 +10,6 @@
 <MudLayout>
     <!-- Mobile Header -->
     <MudAppBar Elevation="1" Class="d-lg-none">
-        <MudIconButton Icon="Icons.Material.Filled.ArrowBack"
-                       Color="Color.Inherit"
-                       Edge="Edge.Start"
-                       OnClick="GoBack" />
-        <MudSpacer />
         <MudText Typo="Typo.h6" Class="text-truncate px-2">
             @currentNotebook?.Title
         </MudText>
@@ -58,7 +55,7 @@
 
                 <!-- Right Pane - Studio -->
                 <div class="pane right-pane d-none d-lg-block">
-                    <StudioPanel NotebookId="@NotebookId" />
+                      <StudioPanel NotebookId="@NotebookId" IsMobile="false" OnFeatureClick="HandleStudioFeatureClick" />
                 </div>
 
                 <!-- Mobile Panes -->
@@ -72,13 +69,91 @@
                     else if (mobileActiveTab == 2)
                     {
                         <StudioPanel NotebookId="@NotebookId"
-                                     IsMobile="true" />
+                                     IsMobile="true"
+                                     OnFeatureClick="HandleStudioFeatureClick" />
                     }
                 </div>
             </div>
         </div>
     </MudMainContent>
 </MudLayout>
+
+@code {
+    [Parameter] public string NotebookId { get; set; } = string.Empty;
+
+    private Notebook? currentNotebook;
+    private int mobileActiveTab = 1; // Default to Chat on mobile
+
+    protected override void OnParametersSet()
+    {
+        LoadNotebook();
+    }
+
+    // Add this method to handle studio feature clicks from child component (Post processing)
+    private void HandleStudioFeatureClick(string featureType)
+    {
+        Console.WriteLine($"🎯 STUDIO FEATURE CLICKED in NotebookDetail:");
+        Console.WriteLine($"   - Notebook: {NotebookId}");
+        Console.WriteLine($"   - Feature: {featureType}");
+        Console.WriteLine($"   - Mobile Tab: {mobileActiveTab}");
+
+        // Add your feature handling logic here
+        switch (featureType)
+        {
+            case "AudioOverview":
+                Console.WriteLine("🎵 Processing audio overview...");
+                break;
+            case "VideoOverview":
+                Console.WriteLine("🎥 Processing video overview...");
+                break;
+            case "MindMap":
+                Console.WriteLine("🗺️ Generating mind map...");
+                break;
+            case "Reports":
+                Console.WriteLine("📊 Creating reports...");
+                break;
+            case "Flashcards":
+                Console.WriteLine("📇 Building flashcards...");
+                break;
+        }
+    }
+
+    private void LoadNotebook()
+    {
+        var allNotebooks = GetSampleNotebooks();
+        currentNotebook = allNotebooks.FirstOrDefault(n => n.Id == NotebookId);
+
+        if (currentNotebook == null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        LayoutService.SetTitle(currentNotebook.Title);
+    }
+
+
+    private List<Notebook> GetSampleNotebooks()
+    {
+        return new List<Notebook>
+        {
+            new Notebook { Id = "1", Title = "The Two Sequences", Description = "Parenting Advice for the Digital Age", Date = "May 4, 2025", SourceCount = 21 },
+            new Notebook { Id = "2", Title = "On World in Duff", Description = "Trends in Health, Wealth and...", Date = "Apr 15, 2025", SourceCount = 24 },
+            new Notebook { Id = "3", Title = "The Encrowded", Description = "The World Ahead 2025", Date = "Jul 7, 2025", SourceCount = 10 },
+            new Notebook { Id = "4", Title = "The Atlantic", Description = "How To Build A Life, from The Atlantic", Date = "Apr 22, 2025", SourceCount = 44 },
+            new Notebook { Id = "5", Title = "New notebook", Description = "Antl and Culture\nWilliam Shakespeare: The...", Date = "Apr 25, 2025", SourceCount = 45 }
+        };
+    }
+
+    public class Notebook
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
+        public int SourceCount { get; set; }
+    }
+}
 
 <style>
     /* Reset any default margins/padding */
