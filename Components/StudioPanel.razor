@@ -36,26 +36,34 @@
 
             <!-- Studio Output Section -->
             <div class="text-center py-4">
-                <MudIcon Icon="@Icons.Material.Filled.FolderSpecial" 
-                        Size="Size.Large" 
-                        Color="Color.Default" 
-                        Class="mb-2" />
-                <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-2">
-                    @StudioOutput
-                </MudText>
-                <MudText Typo="Typo.caption" Color="Color.Default">
+                <MudIcon Icon="@Icons.Material.Filled.FolderSpecial"
+                         Size="Size.Large"
+                         Color="Color.Default"
+                         Class="mb-2" />
+
+                <!-- Scrollable Output Container -->
+                <div style="max-height: 400px; overflow-y: auto; text-align: left; padding: 8px; border: 1px solid var(--mud-palette-lines-default); border-radius: 4px;">
+                    <MudText Typo="Typo.body2" Color="Color.Default" Style="white-space: pre-line; margin: 0;">
+                        @StudioOutput
+                    </MudText>
+                </div>
+
+                <MudText Typo="Typo.caption" Color="Color.Default" Class="mt-2">
                     Click on any studio feature above to generate content for your notebook.
                 </MudText>
             </div>
         }
 
-        <MudButton OnClick="OnAddNote"
-                   Variant="Variant.Filled"
-                   Size="Size.Small"
-                   StartIcon="@Icons.Material.Filled.Add"
-                   Color="Color.Default">
-            Add Note
-        </MudButton>
+        <!-- Centered Add Note Button -->
+        <div class="d-flex justify-center mt-4">
+            <MudButton OnClick="OnAddNote"
+                       Variant="Variant.Filled"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Color="Color.Default">
+                Add Note
+            </MudButton>
+        </div>
 
     </MudCardContent>
 </MudCard>
@@ -94,16 +102,15 @@
     {
         if (!string.IsNullOrEmpty(newOutput))
         {
-            // Append the new output as a single sentence
             if (StudioOutput == "Studio output will be saved here.")
             {
-                // Replace the default message with the first output
-                StudioOutput = newOutput;
+                // Keep default text and append first output on new line
+                StudioOutput += $"\n\n{newOutput}";
             }
             else
             {
-                // Append the new output as a new sentence
-                StudioOutput += $"\n{newOutput}";
+                // Append subsequent outputs on new lines
+                StudioOutput += $"\n\n{newOutput}";
             }
 
             Console.WriteLine($"Studio output updated: {StudioOutput}");

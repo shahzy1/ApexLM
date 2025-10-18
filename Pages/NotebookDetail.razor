@@ -44,7 +44,8 @@
                 <!-- Left Pane - Sources -->
                 <div class="pane left-pane d-none d-lg-block">
                     <SourcePanel NotebookId="@NotebookId"
-                                 SourceCount="@(currentNotebook?.SourceCount ?? 0)" />
+                                 SourceCount="@(currentNotebook?.SourceCount ?? 0)"
+                                 OnSourcesClick="HandleSourcePanelClick" />
                 </div>
 
                 <!-- Middle Pane - Chat -->
@@ -116,6 +117,13 @@
                 Console.WriteLine("📇 Building flashcards...");
                 break;
         }
+    }
+
+    // Add this method to handle source panel clicks from child component (Post processing)
+    private void HandleSourcePanelClick()
+    {
+        Console.WriteLine($"🎯 SOURCE PANEL CLICKED in NotebookDetail:");
+        Console.WriteLine($"   - Notebook: {NotebookId}");
     }
 
     private void LoadNotebook()

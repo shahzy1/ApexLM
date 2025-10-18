@@ -21,7 +21,7 @@
                   Color="Color.Primary" 
                   Size="Size.Small"
                   StartIcon="@Icons.Material.Filled.Add"
-                  OnClick="AddSource"
+                   @onclick="AddSource"
                   FullWidth="true">
             Add Source
         </MudButton>
@@ -84,14 +84,13 @@
 </div>
 
 @code {
-    [Parameter]
-    public string NotebookId { get; set; } = string.Empty;
+    [Parameter] public string NotebookId { get; set; } = string.Empty;
 
-    [Parameter]
-    public int SourceCount { get; set; }
+    [Parameter] public int SourceCount { get; set; }
 
-    [Parameter]
-    public bool IsMobile { get; set; }
+    [Parameter] public bool IsMobile { get; set; }
+
+    [Parameter] public EventCallback<string> OnSourcesClick { get; set; } // Add this
 
     private List<Source> sources = new();
 
@@ -113,9 +112,15 @@
         };
     }
 
-    private void AddSource()
+    private async Task AddSource()
     {
         Console.WriteLine($"Adding source to notebook {NotebookId}");
+        // Notify parent component about the status
+        if (OnSourcesClick.HasDelegate)
+        {
+            await OnSourcesClick.InvokeAsync("source.Name"); // Use 'source' instead of 'sources'
+        }
+
     }
 
     private void OpenSource(Source source)
