@@ -1,4 +1,5 @@
 ﻿@using MudBlazor
+@inject IDialogService DialogService
 
 <div class="source-panel @(IsMobile ? "mobile-panel" : "desktop-panel")">
     <div class="panel-header">
@@ -21,7 +22,7 @@
                   Color="Color.Primary" 
                   Size="Size.Small"
                   StartIcon="@Icons.Material.Filled.Add"
-                   @onclick="AddSource"
+                   @onclick="ShowAddSourceDialog"
                   FullWidth="true">
             Add Source
         </MudButton>
@@ -74,7 +75,7 @@
                           Color="Color.Primary" 
                           Size="Size.Small"
                           StartIcon="@Icons.Material.Filled.Upload"
-                          OnClick="AddSource"
+                           OnClick="ShowAddSourceDialog"
                           FullWidth="true">
                     Upload First Source
                     Saved sources will appear here
@@ -114,15 +115,23 @@
         };
     }
 
-    private async Task AddSource()
+    private async Task ShowAddSourceDialog()
     {
-        Console.WriteLine($"Adding source to notebook {NotebookId}");
-        // Notify parent component about the status
-        if (OnSourcesClick.HasDelegate)
-        {
-            await OnSourcesClick.InvokeAsync("source.Name"); // Use 'source' instead of 'sources'
-        }
+        Console.WriteLine($"Showing add source dialog for notebook {NotebookId}");
 
+        // Using the extension method - much cleaner!
+        var success = await DialogService.ShowAddSourcesDialog();
+
+        if (success)
+        {
+            Console.WriteLine("Sources added successfully!");
+            // Refresh your data or update UI
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("User cancelled the operation");
+        }
     }
 
     private void OpenSource(Source source)

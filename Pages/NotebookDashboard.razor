@@ -2,9 +2,12 @@
 @using ApexLM.Services
 @using ApexLM.Shared
 @using MudBlazor
+
 @inject NavigationManager Navigation
 @inject IFilterStorageService FilterStorage
 @inject ILayoutService LayoutService
+@inject IDialogService DialogService
+
 @layout MainLayout
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-16">
@@ -249,7 +252,7 @@
                         {
                             <MudListItem T="string"
                                         Value="@notebook.Id"
-                                        OnClick="@(() => OpenNotebook(notebook.Id))"
+                                         @onclick="@(() => OpenNotebook(notebook.Id))"
                                         Icon="@Icons.Material.Filled.Note">
                                 <MudText Typo="Typo.h6">@notebook.Title</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
@@ -302,7 +305,7 @@
                     {
                         <MudListItem T="string"
                                     Value="@notebook.Id"
-                                    OnClick="@(() => OpenNotebook(notebook.Id))"
+                                     @onclick="@(() => OpenNotebook(notebook.Id))"
                                     Icon="@Icons.Material.Filled.Note"
                                     Text="@notebook.Title"
                                     SecondaryText="@($"{notebook.Date} - {notebook.SourceCount} sources")" />
@@ -386,7 +389,7 @@
                         {
                             <MudListItem T="string"
                                         Value="@notebook.Id"
-                                        OnClick="@(() => OpenNotebook(notebook.Id))"
+                                         @onclick="@(() => OpenNotebook(notebook.Id))"
                                         Icon="@Icons.Material.Filled.Note">
                                 <MudText Typo="Typo.h6">@notebook.Title</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Default">@notebook.Description</MudText>
@@ -421,7 +424,7 @@
     {
         // Set page title
         LayoutService.SetTitle("ApexLM");
-        
+
         await LoadAllFilterStates();
         LoadSampleData();
         UpdateDisplayedNotebooks();
@@ -443,7 +446,7 @@
             currentView = await FilterStorage.LoadFilterState("notebookView", LayoutView.Card);
             showAllFeatured = await FilterStorage.LoadFilterState("showAllFeatured", false);
             showAllRecent = await FilterStorage.LoadFilterState("showAllRecent", false);
-            
+
             Console.WriteLine($"Loaded filters - Filter: {currentFilter}, View: {currentView}, ShowAllFeatured: {showAllFeatured}, ShowAllRecent: {showAllRecent}");
         }
         catch (Exception ex)
@@ -456,7 +459,7 @@
     {
         currentFilter = filter;
         await FilterStorage.SaveFilterState("notebookFilter", filter);
-        
+
         // Reset expansion states when switching filters
         if (filter == NotebookFilter.All)
         {
@@ -470,7 +473,7 @@
             showAllFeatured = false;
             await FilterStorage.SaveFilterState("showAllFeatured", false);
         }
-        
+
         UpdateDisplayedNotebooks();
         StateHasChanged();
     }
@@ -517,16 +520,16 @@
     private async Task ClearAllFilters()
     {
         await FilterStorage.ClearAllFilterStates();
-        
+
         // Reset to defaults
         currentFilter = NotebookFilter.All;
         currentView = LayoutView.Card;
         showAllFeatured = false;
         showAllRecent = false;
-        
+
         UpdateDisplayedNotebooks();
         StateHasChanged();
-        
+
         Console.WriteLine("All filters cleared and reset to defaults");
     }
 
@@ -621,9 +624,37 @@
         Navigation.NavigateTo($"/notebookdetail/{notebookId}");
     }
 
-    private void CreateNewNotebook()
+    private async Task CreateNewNotebook()
     {
-        Navigation.NavigateTo($"/notebookdetail/new");
+        //-- get the last id of recentNoteBooks
+        var lastRecord = recentNotebooks.LastOrDefault();
+        int lastRecordId = 0;
+        if (lastRecord != null)
+        {
+            int.TryParse(lastRecord.Id, out lastRecordId);
+        }
+
+        recentNotebooks.Add(new()
+        {
+            Id = (lastRecordId + 1).ToString(), Title = "New Notebook", Description = "New Notebook", Date = DateTime.Now.ToShortDateString(), SourceCount = 0
+        });
+
+        // Using the extension method - much cleaner!
+        var success = await DialogService.ShowAddSourcesDialog();
+
+        if (success)
+        {
+            Console.WriteLine("Sources added successfully!");
+            // Refresh your data or update UI
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("User cancelled the operation");
+        }
+
+        Console.WriteLine("New notebook created...");
+        //Navigation.NavigateTo($"/notebookdetail/new");
     }
 
     private void HandleMenuClick(Notebook notebook)
