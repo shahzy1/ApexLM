@@ -1,0 +1,251 @@
+﻿@using MudBlazor
+
+<div class="chat-area @(IsMobile ? "mobile-chat" : "desktop-chat")">
+    <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <MudText Typo="Typo.h6">Chat</MudText>
+            <MudIconButton Icon="@Icons.Material.Filled.Clear"
+                           Size="Size.Small"
+                           Color="Color.Inherit"
+                           OnClick="ClearChat" />
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="chat-messages">
+            @if (messages.Any())
+            {
+                @foreach (var message in messages)
+                {
+                    <div class="@($"message {(message.IsUser ? "user-message" : "ai-message")}")">
+                        <div class="message-avatar">
+                            @if (message.IsUser)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Person"
+                                         Size="Size.Small"
+                                         Color="Color.Default" />
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                         Size="Size.Small"
+                                         Color="Color.Tertiary" />
+                            }
+                        </div>
+                        <div class="message-content">
+                            <MudText Typo="Typo.body1" Class="mb-1">@message.Content</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Tertiary">@message.Timestamp</MudText>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Welcome State -->
+                <div class="welcome-state">
+                    <div class="welcome-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.AutoAwesome"
+                                 Size="Size.Large"
+                                 Color="Color.Primary" />
+                    </div>
+                    <MudText Typo="Typo.h6" Class="mb-2 text-center">How can I help you today?</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-4 text-center">
+                        Ask questions about your sources, summarize content, or generate insights.
+                    </MudText>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Summarize the main themes"))">
+                            <MudCardContent Class="pa-3 text-center">
+                                <MudIcon Icon="@Icons.Material.Filled.Summarize"
+                                         Color="Color.Tertiary"
+                                         Class="mb-2" />
+                                <MudText Typo="Typo.caption">Summarize</MudText>
+                            </MudCardContent>
+                        </MudCard>
+
+                        <MudCard Class="quick-action-card" OnClick="@(() => QuickAction("Find key insights"))">
+                            <MudCardContent Class="pa-3 text-center">
+                                <MudIcon Icon="@Icons.Material.Filled.Insights"
+                                         Color="Color.Tertiary"
+                                         Class="mb-2" />
+                                <MudText Typo="Typo.caption">Key Insights</MudText>
+                            </MudCardContent>
+                        </MudCard>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <MudTextField @bind-Value="newMessage"
+                          Variant="Variant.Outlined"
+                          Placeholder="Ask about your sources..."
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="SendMessage"
+                          Class="chat-input-field"
+                          Size="Size.Medium" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string NotebookId { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? NotebookTitle { get; set; }
+
+    [Parameter]
+    public bool IsMobile { get; set; }
+
+    private List<ChatMessage> messages = new();
+    private string newMessage = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        messages.Add(new ChatMessage
+        {
+            Content = $"Hello! I'm ready to help you explore \"{NotebookTitle}\". You can ask me to summarize content, find connections between sources, or generate new insights based on your materials.",
+            IsUser = false,
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ScrollToBottom();
+    }
+
+    private async void SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var userMessage = newMessage;
+        newMessage = string.Empty;
+
+        messages.Add(new ChatMessage
+        {
+            Content = userMessage,
+            IsUser = true,
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        });
+
+        StateHasChanged();
+        await ScrollToBottom();
+
+        await Task.Delay(1000);
+
+        messages.Add(new ChatMessage
+        {
+            Content = GetAIResponse(userMessage),
+            IsUser = false,
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        });
+
+        StateHasChanged();
+        await ScrollToBottom();
+    }
+
+    private void ClearChat()
+    {
+        messages.Clear();
+        messages.Add(new ChatMessage
+        {
+            Content = $"Chat cleared. I'm ready to help you with \"{NotebookTitle}\".",
+            IsUser = false,
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        });
+    }
+
+    private void QuickAction(string action)
+    {
+        newMessage = action;
+        SendMessage();
+    }
+
+    private async Task ScrollToBottom()
+    {
+        await InvokeAsync(() =>
+        {
+            var element = JS.InvokeAsync<object>("eval",
+                "var chat = document.getElementById('chat-messages'); if (chat) chat.scrollTop = chat.scrollHeight;");
+        });
+    }
+
+    private string GetAIResponse(string userMessage)
+    {
+        if (userMessage.ToLower().Contains("summarize"))
+        {
+            return "Based on your sources, here are the main themes I've identified... [This is a simulated response]";
+        }
+        else
+        {
+            return $"I've analyzed your query about '{userMessage}'. Looking across your sources, I can provide insights and connections. [This is a simulated response]";
+        }
+    }
+
+    public class ChatMessage
+    {
+        public string Content { get; set; } = string.Empty;
+        public bool IsUser { get; set; }
+        public string Timestamp { get; set; } = string.Empty;
+    }
+
+    [Inject] private IJSRuntime JS { get; set; } = null!;
+}
+
+<style>
+    .chat-area {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .chat-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        overflow: hidden;
+    }
+
+    .chat-header {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 16px;
+        min-height: 0;
+    }
+
+    .chat-input-container {
+        flex-shrink: 0;
+        padding-top: 16px;
+        border-top: 1px solid var(--mud-palette-lines-default);
+    }
+
+    .chat-input-field {
+        width: 100%;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .chat-messages {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+        .chat-messages::-webkit-scrollbar {
+            display: none;
+        }
+</style>

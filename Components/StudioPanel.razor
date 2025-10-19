@@ -1,0 +1,199 @@
+﻿@using MudBlazor
+@inject IDialogService DialogService
+
+@{
+    var cardClass = $"h-100{(IsMobile ? " mobile-studio-card" : "")}";
+}
+
+<MudCard Elevation="2" Class="@cardClass">
+    <MudCardContent Class="@(IsMobile ? "pa-3" : "")">
+        <MudText Typo="Typo.h6" Class="mb-3">Studio</MudText>
+        
+        <!-- Studio Features Grid -->
+        <MudGrid Spacing="2">
+            @foreach (var feature in studioFeatures)
+            {
+                <MudItem xs="6" sm="4" md="@(IsMobile ? 6 : 4)">
+                    <MudCard Class="text-center pa-2 feature-card"
+                             @onclick="async () => await OpenFeature(feature.Type)"
+                             Style="height: 100px;">
+                        <MudCardContent Class="d-flex flex-column justify-center align-center">
+                            <MudIcon Icon="@feature.Icon" 
+                                    Color="Color.Primary" 
+                                    Size="Size.Large"
+                                    Class="mb-1" />
+                            <MudText Typo="Typo.caption" Class="text-center">
+                                @feature.Name
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+
+        @if (!IsMobile)
+        {
+            <MudDivider Class="my-4" />
+
+            <!-- Studio Output Section -->
+            <div class="text-center py-4">
+                <MudIcon Icon="@Icons.Material.Filled.FolderSpecial"
+                         Size="Size.Large"
+                         Color="Color.Default"
+                         Class="mb-2" />
+
+                <!-- Scrollable Output Container -->
+                <div style="max-height: 350px; overflow-y: auto; text-align: left; padding: 8px; border: 1px solid var(--mud-palette-lines-default); border-radius: 4px;">
+                    <MudText Typo="Typo.body2" Color="Color.Default" Style="white-space: pre-line; margin: 0;">
+                        @StudioOutput
+                    </MudText>
+                </div>
+
+                <MudText Typo="Typo.caption" Color="Color.Default" Class="mt-2">
+                    After adding sources, click to add Audio Overview, Study Guide, Mind Map, and more!
+                    Click on any studio feature above to generate content for your notebook.
+                </MudText>
+            </div>
+        }
+
+        <!-- Centered Add Note Button -->
+        <div class="d-flex justify-center mt-4">
+            <MudButton OnClick="OnAddNote"
+                       Variant="Variant.Filled"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Add"
+                       Color="Color.Default">
+                Add Note
+            </MudButton>
+        </div>
+
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string NotebookId { get; set; } = string.Empty;
+
+    [Parameter] public bool IsMobile { get; set; }
+
+    [Parameter] public EventCallback<string> OnFeatureClick { get; set; } // Add this
+
+    private List<StudioFeature> studioFeatures = new();
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine($"🔧 StudioPanel Initialized - NotebookId: {NotebookId}, IsMobile: {IsMobile}");
+
+        studioFeatures = new List<StudioFeature>
+        {
+            new StudioFeature { Type = FeatureType.AudioOverview, Name = "Audio Overview", Icon = Icons.Material.Filled.AudioFile },
+            new StudioFeature { Type = FeatureType.VideoOverview, Name = "Video Overview", Icon = Icons.Material.Filled.VideoLibrary },
+            new StudioFeature { Type = FeatureType.MindMap, Name = "Mind Map", Icon = Icons.Material.Filled.AccountTree },
+            new StudioFeature { Type = FeatureType.Reports, Name = "Reports", Icon = Icons.Material.Filled.Assessment },
+            new StudioFeature { Type = FeatureType.Flashcards, Name = "Flashcards", Icon = Icons.Material.Filled.Style }
+        };
+    }
+
+    private async Task OnAddNote()
+    {
+        Console.WriteLine("Add Note button clicked");
+        await DialogService.ShowImplementationPending("Add Note feature is coming soon");
+    }
+
+    private string StudioOutput = "Studio output will be saved here.";
+
+    private void NewStudioOutput(string newOutput)
+    {
+        if (!string.IsNullOrEmpty(newOutput))
+        {
+            if (StudioOutput == "Studio output will be saved here.")
+            {
+                // Keep default text and append first output on new line
+                StudioOutput += $"\n\n{newOutput}";
+            }
+            else
+            {
+                // Append subsequent outputs on new lines
+                StudioOutput += $"\n\n{newOutput}";
+            }
+
+            Console.WriteLine($"Studio output updated: {StudioOutput}");
+        }
+
+        // Logic to handle the new output from studio features
+        Console.WriteLine($"New output received: {newOutput}");
+    }
+
+    private async Task OpenFeature(FeatureType feature)
+    {
+        Console.WriteLine($"🎯 StudioPanel: Opening {feature} for notebook {NotebookId}");
+
+        // Keep existing logic
+        // Implement feature opening logic
+        switch (feature)
+        {
+            case FeatureType.AudioOverview:
+
+                Console.WriteLine($"🎵 AUDIO OVERVIEW: Generating audio summary for notebook {NotebookId}");
+                NewStudioOutput($"🎵 AUDIO OVERVIEW: Generating audio summary for notebook {NotebookId}");
+                break;
+            case FeatureType.VideoOverview:
+                Console.WriteLine($"🎥 VIDEO OVERVIEW: Creating video content for notebook {NotebookId}");
+                NewStudioOutput($"🎥 VIDEO OVERVIEW: Creating video content for notebook {NotebookId}");
+                break;
+            case FeatureType.MindMap:
+                Console.WriteLine($"🗺️ MIND MAP: Building knowledge map for notebook {NotebookId}");
+                NewStudioOutput($"🗺️ MIND MAP: Building knowledge map for notebook {NotebookId}");
+                break;
+            case FeatureType.Reports:
+                Console.WriteLine($"📊 REPORTS: Generating analytical reports for notebook {NotebookId}");
+                NewStudioOutput($"📊 REPORTS: Generating analytical reports for notebook {NotebookId}");
+                break;
+            case FeatureType.Flashcards:
+                Console.WriteLine($"📇 FLASHCARDS: Creating study cards for notebook {NotebookId}");
+                NewStudioOutput($"📇 FLASHCARDS: Creating study cards for notebook {NotebookId}");
+                break;
+        }
+
+        // Notify parent component about the status
+        if (OnFeatureClick.HasDelegate)
+        {
+            await OnFeatureClick.InvokeAsync(feature.ToString());
+        }
+
+    }
+
+    public class StudioFeature
+    {
+        public FeatureType Type { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = string.Empty;
+    }
+
+    public enum FeatureType
+    {
+        AudioOverview,
+        VideoOverview,
+        MindMap,
+        Reports,
+        Flashcards,
+        Outs
+    }
+}
+
+<style>
+    .mobile-studio-card {
+        border-radius: 0;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .feature-card {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .feature-card:hover {
+        background-color: var(--mud-palette-action-hover);
+        transform: translateY(-2px);
+    }
+</style>

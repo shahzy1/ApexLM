@@ -1,0 +1,161 @@
+﻿@using MudBlazor
+
+@inject IDialogService DialogService
+
+<MudDialog MaxWidth="MaxWidth.Medium" FullWidth="true">
+    <TitleContent>
+        <MudText Typo="Typo.h5" Class="mb-2">Add sources</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-4">
+            Sources let NotebookLM base its responses on the information that matters most to you.
+        </MudText>
+    </TitleContent>
+
+    <DialogContent>
+        <!-- Upload Drop Zone -->
+        <MudPaper Elevation="1" Class="pa-4 mb-6 text-center upload-zone">
+            <MudIcon Icon="@Icons.Material.Filled.CloudUpload"
+                     Size="Size.Large"
+                     Color="Color.Primary"
+                     Class="mb-2" />
+
+            <MudText Typo="Typo.h6" Class="mb-1">Upload sources</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-2">
+                Drag & drop or choose file to upload
+            </MudText>
+            <MudText Typo="Typo.caption" Color="Color.Default">
+                Supported file types: PDF, TXT, Markdown, Audio (e.g. MP3)
+            </MudText>
+
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       Class="mt-3"
+                       OnClick="HandleFileUpload">
+                Choose Files
+            </MudButton>
+        </MudPaper>
+
+        <!-- Source Type Grid -->
+        <MudGrid Spacing="3">
+            <!-- Microsoft OneDrive -->
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2" Class="pa-3 h-100 text-center source-paper">
+                    <MudIcon Icon="@Icons.Custom.Brands.Microsoft"
+                             Size="Size.Large"
+                             Color="Color.Primary"
+                             Class="mb-2" />
+                    <MudText Typo="Typo.h6" Class="mb-3">Microsoft OneDrive</MudText>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               FullWidth="true"
+                               OnClick="() => OpenOneDrive()"
+                               Class="mb-1">
+                        OneDrive
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+
+            <!-- Link -->
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2" Class="pa-3 h-100 text-center source-paper">
+                    <MudIcon Icon="@Icons.Material.Filled.Link"
+                             Size="Size.Large"
+                             Color="Color.Primary"
+                             Class="mb-2" />
+                    <MudText Typo="Typo.h6" Class="mb-3">Link</MudText>
+                    <div class="d-flex flex-column gap-2">
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="() => AddWebsite()">
+                            Website
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="() => AddYouTube()">
+                            YouTube
+                        </MudButton>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <!-- Paste Text -->
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2" Class="pa-3 h-100 text-center source-paper">
+                    <MudIcon Icon="@Icons.Material.Filled.ContentPaste"
+                             Size="Size.Large"
+                             Color="Color.Primary"
+                             Class="mb-2" />
+                    <MudText Typo="Typo.h6" Class="mb-3">Paste text</MudText>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               FullWidth="true"
+                               OnClick="() => PasteText()"
+                               Class="mb-1">
+                        Copied text
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+
+</MudDialog>
+
+@code {
+    private void HandleFileUpload()
+    {
+        // Implement file upload logic
+        Console.WriteLine("File upload triggered");
+    }
+
+    private async Task OpenOneDrive()
+    {
+        // Show implementation pending message
+        await DialogService.ShowOneDrivePending();
+    }
+
+    private async Task AddWebsite()
+    {
+        // Show implementation pending message
+        await DialogService.ShowWebsitePending();
+    }
+
+    private async Task AddYouTube()
+    {
+        // Show implementation pending message
+        await DialogService.ShowYouTubePending();
+    }
+
+    private async Task PasteText()
+    {
+        // Show implementation pending message
+        await DialogService.ShowPasteTextPending();
+    }
+}
+
+<style>
+    .upload-zone {
+        border: 2px dashed var(--mud-palette-lines-default);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .upload-zone:hover {
+            border-color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-action-hover);
+        }
+
+    .source-paper {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .source-paper:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+</style>
