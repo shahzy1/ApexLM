@@ -134,9 +134,10 @@
         }
     }
 
-    private void OpenSource(Source source)
+    private async Task OpenSource(Source source)
     {
         Console.WriteLine($"Opening source: {source.Name}");
+        await DialogService.ShowImplementationPending($"Opening source: {source.Name}");
     }
 
     private string GetSourceIcon(SourceType type)

@@ -1,4 +1,5 @@
 ﻿@using MudBlazor
+@inject IDialogService DialogService
 
 @{
     var cardClass = $"h-100{(IsMobile ? " mobile-studio-card" : "")}";
@@ -92,9 +93,10 @@
         };
     }
 
-    private void OnAddNote()
+    private async Task OnAddNote()
     {
         Console.WriteLine("Add Note button clicked");
+        await DialogService.ShowImplementationPending("Add Note feature is coming soon");
     }
 
     private string StudioOutput = "Studio output will be saved here.";

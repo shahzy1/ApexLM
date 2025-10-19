@@ -1,5 +1,7 @@
 ﻿@using MudBlazor
 
+@inject IDialogService DialogService
+
 <MudDialog MaxWidth="MaxWidth.Medium" FullWidth="true">
     <TitleContent>
         <MudText Typo="Typo.h5" Class="mb-2">Add sources</MudText>
@@ -35,21 +37,21 @@
 
         <!-- Source Type Grid -->
         <MudGrid Spacing="3">
-            <!-- Google Workspace -->
+            <!-- Microsoft OneDrive -->
             <MudItem xs="12" md="4">
                 <MudPaper Elevation="2" Class="pa-3 h-100 text-center source-paper">
-                    <MudIcon Icon="@Icons.Custom.Brands.Google"
+                    <MudIcon Icon="@Icons.Custom.Brands.Microsoft"
                              Size="Size.Large"
                              Color="Color.Primary"
                              Class="mb-2" />
-                    <MudText Typo="Typo.h6" Class="mb-3">Google Workspace</MudText>
+                    <MudText Typo="Typo.h6" Class="mb-3">Microsoft OneDrive</MudText>
                     <MudButton Variant="Variant.Outlined"
                                Color="Color.Primary"
                                Size="Size.Small"
                                FullWidth="true"
-                               OnClick="() => OpenGoogleDrive()"
+                               OnClick="() => OpenOneDrive()"
                                Class="mb-1">
-                        Google Drive
+                        OneDrive
                     </MudButton>
                 </MudPaper>
             </MudItem>
@@ -109,28 +111,28 @@
         Console.WriteLine("File upload triggered");
     }
 
-    private void OpenGoogleDrive()
+    private async Task OpenOneDrive()
     {
-        // Implement Google Drive integration
-        Console.WriteLine("Open Google Drive");
+        // Show implementation pending message
+        await DialogService.ShowOneDrivePending();
     }
 
-    private void AddWebsite()
+    private async Task AddWebsite()
     {
-        // Implement website URL input
-        Console.WriteLine("Add Website");
+        // Show implementation pending message
+        await DialogService.ShowWebsitePending();
     }
 
-    private void AddYouTube()
+    private async Task AddYouTube()
     {
-        // Implement YouTube URL input
-        Console.WriteLine("Add YouTube");
+        // Show implementation pending message
+        await DialogService.ShowYouTubePending();
     }
 
-    private void PasteText()
+    private async Task PasteText()
     {
-        // Implement text paste functionality
-        Console.WriteLine("Paste Text");
+        // Show implementation pending message
+        await DialogService.ShowPasteTextPending();
     }
 }
 

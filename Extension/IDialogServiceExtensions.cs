@@ -37,5 +37,48 @@ namespace ApexLM.Extension
 
             return !result.Canceled;
         }
+
+        public static async Task ShowImplementationPending(this IDialogService dialogService, string featureName)
+        {
+            var parameters = new DialogParameters
+            {
+                { "FeatureName", featureName }
+            };
+
+            var options = new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Small,
+                CloseButton = true
+            };
+
+            var dialog = await dialogService.ShowAsync<ImplementationPendingDialog>(
+                "Coming Soon",
+                parameters,
+                options
+            );
+
+            await dialog.Result;
+        }
+
+        // Optional: Specific methods for common features
+        public static async Task ShowOneDrivePending(this IDialogService dialogService)
+        {
+            await ShowImplementationPending(dialogService, "Microsoft OneDrive Integration");
+        }
+
+        public static async Task ShowWebsitePending(this IDialogService dialogService)
+        {
+            await ShowImplementationPending(dialogService, "Website Import");
+        }
+
+        public static async Task ShowYouTubePending(this IDialogService dialogService)
+        {
+            await ShowImplementationPending(dialogService, "YouTube Integration");
+        }
+
+        public static async Task ShowPasteTextPending(this IDialogService dialogService)
+        {
+            await ShowImplementationPending(dialogService, "Text Paste Feature");
+        }
     }
 }
