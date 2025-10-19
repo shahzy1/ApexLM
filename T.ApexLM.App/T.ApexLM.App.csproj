@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\T.ApexLM.App.Services\T.ApexLM.App.Services.csproj" />
+    <ProjectReference Include="..\T.ApexLM.App.Services\T.ApexLM.App.Services.csproj" />
   </ItemGroup>
 
 </Project>
