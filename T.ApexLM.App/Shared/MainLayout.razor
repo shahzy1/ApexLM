@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @using T.ApexLM.App.Services
 @inherits LayoutComponentBase
 
@@ -27,11 +27,12 @@
 
         <MudText Typo="Typo.h5" Class="ml-1" Color="Color.Inherit">@PageTitle</MudText>
         <MudSpacer />
+
+        <LoginDisplay />
+
         <MudIconButton Icon="@(_isDarkMode? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
                        OnClick="ToggleTheme"
                        Title="Toggle Light/Dark Mode" />
-
-        <LoginDisplay />
 
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert"
                        Color="Color.Inherit"

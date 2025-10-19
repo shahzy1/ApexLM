@@ -25,16 +25,12 @@
 
     bool disabled = false;
 
-    // [Inject] private CustomAuthService? CustomAuthService { get; set; }
-
-    // [Inject] public ISecurityService? SecurityService { get; set; }
-
     public void BeginLogIn()
     {
         Navigation.NavigateToLogin("authentication/login");
     }
 
-    public async Task BeginLogOut()
+    public void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout", "/");
     }
