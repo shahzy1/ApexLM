@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: ApexLM_Client, Tenant: Default Directory (tanolis.us - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}

@@ -1,1 +1,0 @@
-C:\Dev\CorporateApp\.sonarqube\out\0
