@@ -6,7 +6,7 @@
 
         public void SetDefaultTitle()
         {
-            OnTitleChanged?.Invoke("T.ApexLM.App");
+            OnTitleChanged?.Invoke("ApexLM");
         }
 
         public void SetTitle(string title)
