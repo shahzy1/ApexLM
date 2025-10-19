@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\T.ApexLM.Core.Domain\T.ApexLM.Core.Domain.csproj" />
+    <ProjectReference Include="..\T.ApexLM.Shared\T.ApexLM.Shared\T.ApexLM.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

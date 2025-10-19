@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-T.ApexLM.API-b7b72b19-b58d-4cf7-8208-a83645143f39</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.10" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\T.ApexLM.Core.Services.Abstractions\T.ApexLM.Core.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\T.ApexLM.Core.Services\T.ApexLM.Core.Services.csproj" />
+    <ProjectReference Include="..\T.ApexLM.Infrastructure.Persistence\T.ApexLM.Infrastructure.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>
