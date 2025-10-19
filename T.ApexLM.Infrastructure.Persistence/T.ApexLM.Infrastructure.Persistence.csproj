@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\T.ApexLM.Core.Domain\T.ApexLM.Core.Domain.csproj" />
-    <ProjectReference Include="..\T.ApexLM.Shared\T.ApexLM.Shared\T.ApexLM.Shared.csproj" />
+    <ProjectReference Include="..\T.ApexLM.Shared\T.ApexLM.Shared.csproj" />
   </ItemGroup>
 
 </Project>
