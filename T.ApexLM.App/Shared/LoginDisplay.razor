@@ -10,20 +10,18 @@
 
         <MudText Typo="Typo.body2">Hello, @context.User.Identity?.Name!</MudText>
         <MudDivider Vertical="true" FlexItem="true" Class="m-4" />
-        <MudButton EndIcon="@Icons.Material.Filled.Logout" Color="Color.Inherit" IconColor="Color.Inherit" @onclick="BeginLogOut" title="Sign out" Disabled=@disabled Style="text-transform:none">Sign out</MudButton>
+        <MudButton EndIcon="@Icons.Material.Filled.Logout" Color="Color.Inherit" IconColor="Color.Inherit" @onclick="BeginLogOut" title="Sign out" Style="text-transform:none">Sign out</MudButton>
 
     </Authorized>
 
     <NotAuthorized>
 
-        <MudButton EndIcon="@Icons.Material.Filled.Login" Color="Color.Inherit" IconColor="Color.Inherit" @onclick="BeginLogIn" title="Sign in" Disabled=@disabled Style="text-transform:none">Sign in</MudButton>
+        <MudButton EndIcon="@Icons.Material.Filled.Login" Color="Color.Inherit" IconColor="Color.Inherit" @onclick="BeginLogIn" title="Sign in" Style="text-transform:none">Sign in</MudButton>
 
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
-
-    bool disabled = false;
 
     public void BeginLogIn()
     {

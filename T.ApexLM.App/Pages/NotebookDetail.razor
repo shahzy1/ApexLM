@@ -1,12 +1,15 @@
 ﻿@* NotebookDetail page *@
 
 @page "/notebookdetail/{NotebookId}"
+@using Microsoft.AspNetCore.Authorization
 @using T.ApexLM.App.Services
 @using T.ApexLM.App.Components
 @using MudBlazor
 
 @inject NavigationManager Navigation
 @inject ILayoutService LayoutService
+
+@attribute [Authorize]
 
 <MudLayout>
     <!-- Mobile Header -->

@@ -1,6 +1,12 @@
 ﻿@page "/"
-@inject NavigationManager Nav
+@using Microsoft.AspNetCore.Authorization
+@using T.ApexLM.App.Shared
+@inject NavigationManager Navigation
 @inject IDialogService DialogService
+
+@attribute [AllowAnonymous]
+
+<RedirectIfAuthenticated RedirectTo="/notebookdashboard" />
 
 <MudContainer MaxWidth="MaxWidth.False" Class="home-page flex flex-col items-center justify-center text-center px-4 py-12">
     <MudText Typo="Typo.h3" Class="font-semibold mb-2 text-primary">
@@ -15,7 +21,7 @@
 
     <MudStack Row="true" Spacing="2" Justify="Justify.Center">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
-                   OnClick="@(() => Nav.NavigateTo("authentication/login"))">
+                   OnClick="@(() => Navigation.NavigateTo("authentication/login"))">
             Login
         </MudButton>
 
@@ -27,37 +33,47 @@
 
     <MudDivider Class="my-8" />
 
-    <MudGrid GutterSize="3">
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="p-4" Elevation="1">
-                <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary" Size="Size.Large" />
-                <MudText Typo="Typo.h6" Class="mt-2">Add Sources</MudText>
-                <MudText Typo="Typo.body2">
-                    Upload documents, notes, or recordings — ApexLM learns from your content.
-                </MudText>
+    <MudGrid Spacing="3" Justify="Justify.Center">
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="p-4 h-100 feature-card" Elevation="1"
+                      @onclick="() => NavigateToNotebook()">
+                <div class="text-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-2">Add Sources</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary">
+                        Upload documents, notes, or recordings — ApexLM learns from your content.
+                    </MudText>
+                </div>
             </MudPaper>
         </MudItem>
 
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="p-4" Elevation="1">
-                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
-                <MudText Typo="Typo.h6" Class="mt-2">Generate Insights</MudText>
-                <MudText Typo="Typo.body2">
-                    Summarize, analyze, and create flashcards using Azure AI.
-                </MudText>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="p-4 h-100 feature-card" Elevation="1"
+                      @onclick="() => NavigateToNotebook()">
+                <div class="text-center">
+                    <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-2">Generate Insights</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary">
+                        Summarize, analyze, and create flashcards using Azure AI.
+                    </MudText>
+                </div>
             </MudPaper>
         </MudItem>
 
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="p-4" Elevation="1">
-                <MudIcon Icon="@Icons.Material.Filled.Chat" Color="Color.Primary" Size="Size.Large" />
-                <MudText Typo="Typo.h6" Class="mt-2">Ask Questions</MudText>
-                <MudText Typo="Typo.body2">
-                    Chat with your sources and get intelligent answers instantly.
-                </MudText>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Class="p-4 h-100 feature-card" Elevation="1"
+                      @onclick="() => NavigateToNotebook()">
+                <div class="text-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Chat" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Typo="Typo.h6" Class="mt-2">Ask Questions</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Primary">
+                        Chat with your sources and get intelligent answers instantly.
+                    </MudText>
+                </div>
             </MudPaper>
         </MudItem>
     </MudGrid>
+
 </MudContainer>
 
 @code {
@@ -66,9 +82,32 @@
         await DialogService.ShowImplementationPending("Learning more about ApexLM...");
     }
 
+    private void NavigateToNotebook()
+    {
+        Navigation.NavigateTo($"/notebookdashboard");
+    }
+
 }
 <style>
     .home-page {
         min-height: calc(100vh - 64px); /* adjust for app bar */
     }
+
+    .feature-card {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: var(--mud-palette-primary);
+            background-color: var(--mud-palette-action-hover);
+        }
+
+        .feature-card:active {
+            transform: translateY(-2px);
+            transition: transform 0.1s;
+        }
 </style>
