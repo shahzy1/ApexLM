@@ -1,7 +1,7 @@
-﻿# Azure AI Text Analytics API
+﻿Azure AI Text Analytics API
 A comprehensive text analytics service built with FastAPI (Python) that provides multiple natural language processing capabilities using Azure Cognitive Services. Includes a C# Web API proxy layer for enterprise integration.
 
-🚀 Features
+Features
 Sentiment Analysis - Detect positive, negative, and neutral sentiment
 
 Language Detection - Identify the language of text with confidence scores
@@ -18,13 +18,22 @@ Batch Processing - Analyze multiple texts in a single request
 
 Health Monitoring - Service status and connectivity checks
 
-🏗️ Flow
-Client → C# Web API → Python FastAPI → Azure AI Service → back through chain
-•	The Python service is responsible for AI processing only.
-•	The C# Web API is your enterprise-grade gateway, handling security, identity, and API management.
-
-📋 Prerequisites
-
+Architecture
+text
+TextAnalyticsAPI/
+├── AiService/                 # Python FastAPI Service
+│   ├── main.py               # FastAPI application entry point
+│   ├── requirements.txt      # Python dependencies
+│   └── .env                 # Environment variables
+│
+├── TextAnalyticsAPI/         # C# Web API Proxy
+│   ├── Controllers/
+│   │   └── TextAnalyticsController.cs
+│   ├── Program.cs
+│   └── appsettings.json
+│
+└── README.md
+Prerequisites
 Python 3.8+ with pip
 
 .NET 6.0+ SDK
@@ -33,7 +42,7 @@ Azure Cognitive Services account with Text Analytics API
 
 Azure CLI (optional, for deployment)
 
-⚙️ Setup & Installation
+Setup & Installation
 1. Clone the Repository
 bash
 git clone https://github.com/yourusername/azure-ai-text-analytics.git
@@ -44,7 +53,12 @@ cd AiService
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -63,19 +77,7 @@ cd TextAnalyticsAPI
 
 # Restore NuGet packages
 dotnet restore
-
-# Update appsettings.json with your Python service URL
-appsettings.json:
-
-json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information"
-    }
-  }
-}
-🚀 Running the Services
+Running the Services
 Start Python FastAPI Service
 bash
 cd AiService
@@ -84,7 +86,7 @@ Start C# Web API Service
 bash
 cd TextAnalyticsAPI
 dotnet run
-📚 API Documentation
+API Documentation
 FastAPI Service (Port 8000)
 Interactive Docs: http://localhost:8000/docs
 
@@ -97,7 +99,7 @@ Swagger Docs: http://localhost:7000/swagger
 
 Health Check: http://localhost:7000/api/TextAnalytics/health
 
-🔌 API Endpoints
+API Endpoints
 Single Text Analysis
 http
 POST /api/TextAnalytics/sentiment
@@ -114,8 +116,7 @@ json
 {
   "text": "Your text to analyze here"
 }
-
-💡 Usage Examples
+Usage Examples
 cURL Examples
 bash
 # Sentiment Analysis
@@ -147,7 +148,7 @@ response = requests.post(
     json={"text": "This is fantastic!"}
 )
 print(response.json())
-📊 Response Examples
+Response Examples
 Sentiment Analysis Response
 json
 {
@@ -181,7 +182,7 @@ json
   ],
   "redacted_text": "My email is [REDACTED] and phone is [REDACTED]."
 }
-🔧 Configuration
+Configuration
 Azure Cognitive Services
 Create a Language Service in Azure Portal
 
@@ -192,7 +193,7 @@ Update the .env file with your credentials
 C# Proxy Configuration
 The C# service acts as a proxy to the Python service. Update the base URL in Program.cs if needed.
 
-🛠️ Development
+Development
 Adding New Features
 Add new service module in AiService/services/
 
@@ -211,7 +212,7 @@ python -m pytest
 # Test C# service
 cd TextAnalyticsAPI
 dotnet test
-🚀 Deployment
+Deployment
 Docker Deployment
 dockerfile
 # Python Service
@@ -227,7 +228,7 @@ az webapp up --name my-python-ai-service --resource-group my-rg
 
 # Deploy C# service
 az webapp up --name my-csharp-proxy --resource-group my-rg
-🤝 Contributing
+Contributing
 Fork the repository
 
 Create a feature branch (git checkout -b feature/amazing-feature)
@@ -238,17 +239,17 @@ Push to the branch (git push origin feature/amazing-feature)
 
 Open a Pull Request
 
-📄 License
+License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-🙏 Acknowledgments
+Acknowledgments
 Azure Cognitive Services
 
 FastAPI
 
 ASP.NET Core
 
-📞 Support
+Support
 For support, please open an issue in the GitHub repository or contact the development team.
 
 Note: Ensure your Azure Cognitive Services resource is properly configured and has the necessary permissions for text analytics operations.
