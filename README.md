@@ -19,7 +19,6 @@ Batch Processing - Analyze multiple texts in a single request
 Health Monitoring - Service status and connectivity checks
 
 🏗️ Architecture
-![Uploading image.png…]()
 
 TextAnalyticsAPI/
 ├── 📁 AiService/                 # Python FastAPI Service
