@@ -1,5 +1,4 @@
 ﻿# Azure AI Text Analytics API
-Azure AI Text Analytics API
 A comprehensive text analytics service built with FastAPI (Python) that provides multiple natural language processing capabilities using Azure Cognitive Services. Includes a C# Web API proxy layer for enterprise integration.
 
 🚀 Features
@@ -19,22 +18,13 @@ Batch Processing - Analyze multiple texts in a single request
 
 Health Monitoring - Service status and connectivity checks
 
-🏗️ Architecture
-text
-TextAnalyticsAPI/
-├── 📁 AiService/                 # Python FastAPI Service
-│   ├── main.py                  # FastAPI application entry point
-│   ├── requirements.txt         # Python dependencies
-│   └── .env                    # Environment variables
-│
-├── 📁 TextAnalyticsAPI/         # C# Web API Proxy
-│   ├── Controllers/
-│   │   └── TextAnalyticsController.cs
-│   ├── Program.cs
-│   └── appsettings.json
-│
-└── 📄 README.md
+🏗️ Flow
+Client → C# Web API → Python FastAPI → Azure AI Service → back through chain
+•	The Python service is responsible for AI processing only.
+•	The C# Web API is your enterprise-grade gateway, handling security, identity, and API management.
+
 📋 Prerequisites
+
 Python 3.8+ with pip
 
 .NET 6.0+ SDK
@@ -124,6 +114,7 @@ json
 {
   "text": "Your text to analyze here"
 }
+
 💡 Usage Examples
 cURL Examples
 bash
