@@ -312,9 +312,41 @@ paket-files/
 # CodeRush personal settings
 .cr/personal
 
+# C# / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.csproj.user
+appsettings.*.json
+*.pfx
+*.publishsettings
+
+# IDEs
+.vscode/
+.idea/
+
+
 # Python Tools for Visual Studio (PTVS)
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.env
+*.env
+*.sqlite3
+*.db
+
+# Python virtual environments
+venv/
+.env/
+
+# Optional: Mac/Linux file system files
+.DS_Store
+Thumbs.db
+/ApexAI.TextAnalyticsService/.env
 
 # Cake - Uncomment if you are using it
 # tools/**
@@ -372,3 +404,6 @@ obj/
 
 *.appsettings
 appsettings.json
+
+# my local file
+Readme.local

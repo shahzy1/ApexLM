@@ -1,0 +1,55 @@
+﻿@* 
+    It supports both:
+        Real Blazor Authentication (via AuthenticationStateProvider), and
+        LocalStorage-based tokens (for dev/testing before backend integration). 
+        Easy to extend — you can later add role-based redirects like /admin or /profile.
+*@
+
+@code {
+
+}
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
+
+@code {
+    [Parameter] public string RedirectTo { get; set; } = "/notebookdashboard";
+    [Parameter] public bool CheckLocalStorage { get; set; } = true;
+    private bool _checked = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_checked)
+        {
+            _checked = true;
+
+            try
+            {
+                // ✅ 1. Check Blazor Authentication
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    Navigation.NavigateTo(RedirectTo, forceLoad: true);
+                    return;
+                }
+
+                // ✅ 2. Fallback: Check LocalStorage token
+                if (CheckLocalStorage)
+                {
+                    var token = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        Navigation.NavigateTo(RedirectTo, forceLoad: true);
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Redirect check failed: {ex.Message}");
+            }
+        }
+    }
+}

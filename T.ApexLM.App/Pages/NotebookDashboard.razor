@@ -1,4 +1,5 @@
-﻿@page "/nbdashboard"
+﻿@page "/notebookdashboard"
+@using Microsoft.AspNetCore.Authorization
 @using T.ApexLM.App.Services
 @using T.ApexLM.App.Shared
 @using MudBlazor
@@ -7,6 +8,8 @@
 @inject IFilterStorageService FilterStorage
 @inject ILayoutService LayoutService
 @inject IDialogService DialogService
+
+@attribute [Authorize]
 
 @layout MainLayout
 
