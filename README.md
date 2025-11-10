@@ -28,19 +28,21 @@ A comprehensive **text analytics service** powered by **FastAPI (Python)** and *
 
 ## 🏗️ Architecture
 
+```bash
 TextAnalyticsAPI/
-├── 📁 AiService/ # Python FastAPI Service
-│ ├── main.py # FastAPI app entry point
-│ ├── requirements.txt # Python dependencies
-│ └── .env # Environment variables
+├── 📁 AiService/                 # Python FastAPI Service
+│   ├── main.py                  # FastAPI app entry point
+│   ├── requirements.txt         # Python dependencies
+│   └── .env                     # Environment variables
 │
-├── 📁 TextAnalyticsAPI/ # C# Web API Proxy
-│ ├── Controllers/
-│ │ └── TextAnalyticsController.cs
-│ ├── Program.cs
-│ └── appsettings.json
+├── 📁 TextAnalyticsAPI/         # C# Web API Proxy
+│   ├── Controllers/
+│   │   └── TextAnalyticsController.cs
+│   ├── Program.cs
+│   └── appsettings.json
 │
 └── 📄 README.md
+
 
 ## 📋 Prerequisites
 
