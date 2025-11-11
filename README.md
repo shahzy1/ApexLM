@@ -59,6 +59,7 @@ TextAnalyticsAPI/
 ```bash
 git clone https://github.com/yourusername/azure-ai-text-analytics.git
 cd azure-ai-text-analytics
+
 2️⃣ Python FastAPI Service Setup
 
 cd AiService
