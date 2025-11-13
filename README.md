@@ -1,10 +1,10 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-![Python 3.9+](https://img.shields.io/badge/Python-3.9+-yellow.svg)
-![.NET 6.0+](https://img.shields.io/badge/.NET-6.0+-purple.svg)
-![FastAPI](https://img.shields.io/badge/Framework-FastAPI-green.svg)
-![ASP.NET Core](https://img.shields.io/badge/Framework-ASP.NET%20Core-blue.svg)
-![Azure Cognitive Services](https://img.shields.io/badge/Azure-Cognitive%20Services-lightblue.svg)
-![GPT-5](https://img.shields.io/badge/AI-GPT-5-orange.svg)
+![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Blazor](https://img.shields.io/badge/Blazor-512BD4?logo=blazor&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoftazure&logoColor=white)
+![SQL](https://img.shields.io/badge/Azure_SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
+![GPT-5](https://img.shields.io/badge/GPT-5-AI%20Model-red?logo=openai&logoColor=white)
 
 # 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
 
