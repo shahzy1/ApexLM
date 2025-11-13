@@ -4,6 +4,7 @@
 ![FastAPI](https://img.shields.io/badge/Framework-FastAPI-green.svg)
 ![ASP.NET Core](https://img.shields.io/badge/Framework-ASP.NET%20Core-blue.svg)
 ![Azure Cognitive Services](https://img.shields.io/badge/Azure-Cognitive%20Services-lightblue.svg)
+![GPT-5](https://img.shields.io/badge/AI-GPT-5-orange.svg)
 
 # 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
 
