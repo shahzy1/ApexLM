@@ -4,7 +4,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoftazure&logoColor=white)
 ![SQL](https://img.shields.io/badge/Azure_SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
-![GPT-5](https://img.shields.io/badge/GPT-5-AI%20Model-red?logo=openai&logoColor=white)
+![GPT-5](https://img.shields.io/badge/GPT-5-Enabled-412991?logo=openai&logoColor=white)
 
 # 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
 
