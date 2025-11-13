@@ -1,5 +1,3 @@
-# 🧠 ApexLM - Azure AI Text Analytics API
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-yellow.svg)
 ![.NET 6.0+](https://img.shields.io/badge/.NET-6.0+-purple.svg)
