@@ -42,6 +42,7 @@ Azure Blob Storage (Document Files)
 ![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Blazor](https://img.shields.io/badge/Blazor-512BD4?logo=blazor&logoColor=white)
+![ASP.NET Web API](https://img.shields.io/badge/ASP.NET_Web_API-512BD4?logo=dotnet&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
 ![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoftazure&logoColor=white)
 ![SQL](https://img.shields.io/badge/Azure_SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
@@ -81,6 +82,7 @@ Azure Blob Storage (Document Files)
 
 - 🐍 **Python 3.8+** with pip  
 - 💠 **.NET 6.0+ SDK**  
+- 🤖 **GPT-5** model integration for text summarization and intelligent responses  
 - ☁️ **Azure Cognitive Services** account (Text Analytics API enabled)  
 - 💻 **Azure CLI** *(optional, for deployment)*  
 
