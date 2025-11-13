@@ -11,8 +11,6 @@
 
 > From text analytics to summarization — ApexLM brings Azure AI and GPT-5 together in one intelligent workspace.
 
-# ApexLM — Hybrid AI Text Analytics and Summarization Service
-
 ApexLM combines Azure AI and GPT-5 to deliver intelligent text analytics and summarization in a single workspace. 
 
 **Disclaimer:** ApexLM is a personal learning project and is not affiliated with or sponsored by my employer.
