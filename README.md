@@ -24,7 +24,7 @@ The platform securely manages user content and documents using **Azure SQL**, **
 ---
 
 ## ⚙️ Architecture Overview
-
+```
 Blazor WebAssembly (UI)
 ↓
 ASP.NET Core Web API ←→ FastAPI (Python AI Services)
@@ -34,7 +34,7 @@ Azure Cognitive Services + GPT-5
 Azure SQL (User & Notebook Data)
 ↓
 Azure Blob Storage (Document Files)
-
+```
 ---
 
 ## 🧩 Tech Stack
