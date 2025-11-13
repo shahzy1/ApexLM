@@ -11,7 +11,7 @@
 
 > From text analytics to summarization — ApexLM brings Azure AI and GPT-5 together in one intelligent workspace.
 
-ApexLM is a **standalone Blazor WebAssembly application** powered by **ASP.NET Core (C#)** and **FastAPI (Python)**.  
+ApexLM is a **Blazor WebAssembly application** powered by **ASP.NET Core (C#)** and **FastAPI (Python)**.  
 It integrates **Azure Cognitive Services** and **GPT-5** for intelligent text processing, including:
 
 - 🔹 **Text Summarization** using GPT-5  
