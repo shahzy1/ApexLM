@@ -1,4 +1,4 @@
-# 🧠 Azure AI Text Analytics API
+# 🧠 ApexLM - Azure AI Text Analytics API
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-yellow.svg)
@@ -7,42 +7,76 @@
 ![ASP.NET Core](https://img.shields.io/badge/Framework-ASP.NET%20Core-blue.svg)
 ![Azure Cognitive Services](https://img.shields.io/badge/Azure-Cognitive%20Services-lightblue.svg)
 
----
+# 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
 
-A comprehensive **text analytics service** powered by **FastAPI (Python)** and **Azure Cognitive Services**, with a **C# ASP.NET Core Web API proxy layer** for enterprise-grade integration and secure API management.
+> From text analytics to summarization — ApexLM brings Azure AI and GPT-5 together in one intelligent workspace.
 
----
+ApexLM is a **standalone Blazor WebAssembly application** powered by **ASP.NET Core (C#)** and **FastAPI (Python)**.  
+It integrates **Azure Cognitive Services** and **GPT-5** for intelligent text processing, including:
 
-## 🚀 Features
+- 🔹 **Text Summarization** using GPT-5  
+- 🔹 **Sentiment Analysis**  
+- 🔹 **Language Detection**  
+- 🔹 **Entity Recognition**  
+- 🔹 **PII Detection**
 
-- 🧩 **Sentiment Analysis** — Detect positive, negative, and neutral sentiment  
-- 🌐 **Language Detection** — Identify the language of text with confidence scores  
-- 🗝️ **Key Phrase Extraction** — Extract important phrases and topics  
-- 🧍 **Named Entity Recognition (NER)** — Identify people, places, and organizations  
-- 🕵️ **PII Detection** — Detect and redact personally identifiable information  
-- 🔗 **Linked Entity Recognition** — Connect entities to knowledge base entries  
-- 🧾 **Batch Processing** — Analyze multiple texts in a single request  
-- 🩺 **Health Monitoring** — Service status and connectivity checks  
+The platform securely manages user content and documents using **Azure SQL**, **Blob Storage**, and **Managed Identity**, eliminating the need for secrets or connection strings.
 
 ---
 
-## 🏗️ Architecture
+## ⚙️ Architecture Overview
 
-```bash
-TextAnalyticsAPI/
-├── 📁 AiService/                 # Python FastAPI Service
-│   ├── main.py                  # FastAPI app entry point
-│   ├── requirements.txt         # Python dependencies
-│   └── .env                     # Environment variables
-│
-├── 📁 TextAnalyticsAPI/         # C# Web API Proxy
-│   ├── Controllers/
-│   │   └── TextAnalyticsController.cs
-│   ├── Program.cs
-│   └── appsettings.json
-│
-└── 📄 README.md
+Blazor WebAssembly (UI)
+↓
+ASP.NET Core Web API ←→ FastAPI (Python AI Services)
+↓
+Azure Cognitive Services + GPT-5
+↓
+Azure SQL (User & Notebook Data)
+↓
+Azure Blob Storage (Document Files)
 
+---
+
+## 🧩 Tech Stack
+
+![C#](https://img.shields.io/badge/C%23-239120?logo=csharp&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Blazor](https://img.shields.io/badge/Blazor-512BD4?logo=blazor&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Azure](https://img.shields.io/badge/Azure-0078D4?logo=microsoftazure&logoColor=white)
+![SQL](https://img.shields.io/badge/Azure_SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
+
+---
+
+## 🔐 Security & Integration
+
+- Managed Identity authentication (no secrets or SAS tokens)  
+- Azure Key Vault integration for API and resource credentials  
+- Role-based access and notebook-level ownership control
+
+---
+
+## 🚀 Getting Started
+
+1. Clone the repository  
+2. Configure Azure SQL, Blob Storage, and Cognitive Services  
+3. Launch the Blazor WebAssembly app and FastAPI backend  
+4. Upload documents → Generate summaries, insights, and entities
+
+---
+
+## 🔮 Future Enhancements
+
+- 🧠 **Semantic Search & Knowledge Grounding** — connect notebook data to GPT-based reasoning  
+- 🗂️ **Folder-based Organization** — richer hierarchy for notebooks and document sets  
+- 🎤 **Multimodal Support** — extend analysis to voice transcripts and images  
+- 🧾 **Document History & Versioning** — track evolution and insights over time  
+- 🔍 **Query Engine Integration** — natural language queries across stored content  
+
+---
+
+📘 *ApexLM is designed for intelligent content understanding — secure, scalable, and built on Azure-first principles.*
 
 ## 📋 Prerequisites
 
@@ -254,9 +288,8 @@ Senior Azure Developer | Cloud & AI Engineer
 
 🙏 Acknowledgments
 Azure Cognitive Services
-
+GPT-5
 FastAPI
-
 ASP.NET Core
 
 
