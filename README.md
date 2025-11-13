@@ -278,6 +278,7 @@ git commit -m "Add amazing feature"
 
 # 4. Push and open a Pull Request
 git push origin feature/amazing-feature
+
 📄 License
 This project is licensed under the MIT License — see the LICENSE file for details.
 
