@@ -57,12 +57,11 @@ Azure Blob Storage (Document Files)
 
 ---
 
-## 🚀 Getting Started
-
+🚀 Getting Started  
 1. Clone the repository  
 2. Configure Azure SQL, Blob Storage, and Cognitive Services  
 3. Launch the Blazor WebAssembly app and FastAPI backend  
-4. Upload documents → Generate summaries, insights, and entities
+4. Upload documents → Generate summaries, insights, and entities using **GPT-5** and Azure AI  
 
 ---
 
