@@ -7,7 +7,7 @@
 ![Azure Cognitive Services](https://img.shields.io/badge/Azure_Cognitive_Services-0078D4?logo=microsoftazure&logoColor=white)
 ![GPT-5](https://img.shields.io/badge/GPT--5-Enabled-412991?style=flat&logo=openai&logoColor=white)
 
-# 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
+# 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service (Lab Project)
 
 > From text analytics to summarization — ApexLM brings Azure AI and GPT-5 together in one intelligent workspace.
 
