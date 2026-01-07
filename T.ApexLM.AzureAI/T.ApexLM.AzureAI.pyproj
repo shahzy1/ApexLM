@@ -57,10 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="models\" />
+    <Folder Include="config\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env" />
+    <Content Include="config\custom-classes.json" />
     <Content Include="launch.json" />
     <Content Include="Readme.local" />
     <Content Include="requirements.txt" />

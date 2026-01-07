@@ -17,6 +17,26 @@ namespace T.ApexLM.API
             _logger = logger;
         }
 
+        [HttpGet("health")]
+        public async Task<IActionResult> HealthCheck()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("/health");
+
+                if (!response.IsSuccessStatusCode)
+                    return StatusCode((int)response.StatusCode, "Python service is unhealthy");
+
+                var health = await response.Content.ReadFromJsonAsync<JsonElement>();
+                return Ok(health);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Health check failed");
+                return StatusCode(503, new { status = "unhealthy", error = ex.Message });
+            }
+        }
+
         [HttpPost("sentiment")]
         public async Task<IActionResult> AnalyzeSentiment([FromBody] TextRequest request)
         {
@@ -169,25 +189,73 @@ namespace T.ApexLM.API
             }
         }
 
-        [HttpGet("health")]
-        public async Task<IActionResult> HealthCheck()
+        [HttpPost("classify")]
+        public async Task<IActionResult> ClassifyText([FromBody] ClassificationRequest request)
         {
             try
             {
-                var response = await _httpClient.GetAsync("/health");
+                if (string.IsNullOrWhiteSpace(request.Text))
+                    return BadRequest(new { error = "Text cannot be null or empty" });
+
+                _logger.LogInformation("Classifying text with project: {ProjectName}", request.ProjectName);
+
+                var response = await _httpClient.PostAsJsonAsync("/analyze/classify", request);
 
                 if (!response.IsSuccessStatusCode)
-                    return StatusCode((int)response.StatusCode, "Python service is unhealthy");
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Classification service returned {StatusCode}: {Error}", response.StatusCode, errorContent);
+                    return StatusCode((int)response.StatusCode, errorContent);
+                }
 
-                var health = await response.Content.ReadFromJsonAsync<JsonElement>();
-                return Ok(health);
+                var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                return Ok(result);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Failed to connect to classification service");
+                return StatusCode(503, new { error = "Classification service unavailable", details = ex.Message });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Health check failed");
-                return StatusCode(503, new { status = "unhealthy", error = ex.Message });
+                _logger.LogError(ex, "Unexpected error in text classification");
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
             }
         }
+
+        [HttpPost("classify/simple")]
+        public async Task<IActionResult> ClassifyTextSimple([FromBody] TextRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Text))
+                    return BadRequest(new { error = "Text cannot be null or empty" });
+
+                var response = await _httpClient.PostAsJsonAsync("/analyze/classify/simple", request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, errorContent);
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in simple text classification");
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
+            }
+        }
+    }
+
+    // request models for text classification
+    public class ClassificationRequest
+    {
+        public string Text { get; set; } = string.Empty;
+        public string ProjectName { get; set; } = "MyCustomClassification";
+        public string DeploymentName { get; set; } = "production";
     }
 
     public class TextRequest

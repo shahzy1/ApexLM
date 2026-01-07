@@ -9,7 +9,7 @@
 
 ---
 
-A comprehensive **text analytics service** powered by **FastAPI (Python)** and **Azure Cognitive Services**, with a **C# ASP.NET Core Web API proxy layer** for enterprise-grade integration and secure API management.
+ApexLM uses a dual backend architecture: ASP.NET Core Web API for authentication, authorization, data management, and secure access to Azure resources, and FastAPI for AI-heavy workloads. FastAPI is responsible for text processing, GPT-5 interactions, and any Python-based ML tasks. This separation keeps AI logic isolated, improves scaling efficiency, leverages Python’s mature AI ecosystem, and enables the platform to evolve into more advanced AI capabilities without modifying the core .NET backend.
 
 ---
 
