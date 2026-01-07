@@ -7,24 +7,27 @@
 ![Azure Cognitive Services](https://img.shields.io/badge/Azure_Cognitive_Services-0078D4?logo=microsoftazure&logoColor=white)
 ![GPT-5](https://img.shields.io/badge/GPT--5-Enabled-412991?style=flat&logo=openai&logoColor=white)
 
-# 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service
+# 🧠 ApexLM — Hybrid AI Text Analytics and Summarization Service (Lab Project)
 
 > From text analytics to summarization — ApexLM brings Azure AI and GPT-5 together in one intelligent workspace.
 
-ApexLM combines Azure AI and GPT-5 to deliver intelligent text analytics and summarization in a single workspace. 
+ApexLM is a personal lab and learning project focused on hands-on exploration of Azure OpenAI and Azure Cognitive Services for text analytics and summarization. The project brings together modern application patterns and AI APIs in a controlled, non-production environment to understand integration approaches, deployment models, and secure design considerations.
 
-**Disclaimer:** ApexLM is a personal learning project and is not affiliated with or sponsored by my employer.
+ApexLM is not affiliated with or sponsored by any employer and is intended solely for learning and experimentation.
 
-ApexLM is a Blazor WebAssembly application powered by ASP.NET Core (C#) and FastAPI (Python).  
-It integrates Azure Cognitive Services and GPT-5 for intelligent text processing, including:
+The application is built as a Blazor WebAssembly frontend with ASP.NET Core (C#) and FastAPI (Python) backend services. It integrates Azure Cognitive Services and Azure OpenAI APIs to explore intelligent text processing capabilities, including:
 
-🔹 Text Summarization using GPT-5  
-🔹 Sentiment Analysis  
-🔹 Language Detection  
-🔹 Entity Recognition  
-🔹 PII Detection  
+Text summarization using Azure OpenAI
 
-The platform securely manages user content and documents using Azure SQL, Blob Storage, and Managed Identity, eliminating the need for secrets or connection strings.
+Sentiment analysis
+
+Language detection
+
+Entity recognition
+
+PII detection
+
+The platform demonstrates secure handling of user content using Azure SQL, Azure Blob Storage, and Managed Identity, avoiding hard-coded secrets or connection strings and emphasizing secure, cloud-native integration patterns.
 
 ---
 

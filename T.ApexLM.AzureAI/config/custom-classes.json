@@ -1,0 +1,34 @@
+{
+  "categories": [
+    {
+      "name": "support",
+      "keywords": [ "help", "support", "problem", "issue", "error", "bug", "fix", "trouble" ],
+      "description": "Customer support and technical issues"
+    },
+    {
+      "name": "sales",
+      "keywords": [ "buy", "purchase", "price", "cost", "order", "sale", "discount", "quote" ],
+      "description": "Sales and purchasing inquiries"
+    },
+    {
+      "name": "technical",
+      "keywords": [ "technical", "setup", "install", "configure", "api", "integration", "documentation" ],
+      "description": "Technical setup and integration"
+    },
+    {
+      "name": "billing",
+      "keywords": [ "bill", "invoice", "payment", "charge", "refund", "subscription", "billing" ],
+      "description": "Billing and payment issues"
+    },
+    {
+      "name": "feedback",
+      "keywords": [ "feedback", "suggestion", "improve", "feature", "request", "complaint" ],
+      "description": "Feedback and feature requests"
+    },
+    {
+      "name": "general",
+      "keywords": [ "hello", "hi", "thanks", "thank you", "information", "contact" ],
+      "description": "General inquiries and greetings"
+    }
+  ]
+}

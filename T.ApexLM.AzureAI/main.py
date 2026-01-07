@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+import json
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
@@ -18,6 +19,12 @@ app = FastAPI(
 # Pydantic model for requests
 class TextRequest(BaseModel):
     text: str
+
+# Custom Text Classification
+class ClassificationRequest(BaseModel):
+    text: str
+    project_name: str = "classify-text-lab"
+    deploment_name: str = "articles"  #"production"
 
 # Configuration
 def get_azure_client():
@@ -41,6 +48,84 @@ try:
 except Exception as e:
     print(f"❌ Failed to initialize Azure client: {e}")
     client = None
+
+# Custom Classification Function
+#def classify_text_custom(text: str, project_name: str, deployment_name: str):
+def classify_text_custom(text: str, project_name: str = "classify-text-lab", deployment_name: str = "articles"):
+    """
+    Custom text classification using Azure Custom Text
+    Note: This requires a trained custom classification model in Azure
+    """
+    if client is None:
+        raise HTTPException(status_code=500, detail="Azure client not configured")
+    
+    try:
+        # For Azure Custom Text classification (requires custom model)
+        # This is a placeholder - actual implementation depends on your custom model
+        poller = client.begin_single_label_classify(
+            documents=[text],
+            project_name=project_name,
+            deployment_name=deployment_name
+        )
+        
+        result = poller.result()
+        document_result = result[0]
+        
+        classifications = []
+        for classification in document_result.classifications:
+            classifications.append({
+                "category": classification.category,
+                "confidence_score": classification.confidence_score
+            })
+        
+        return {
+            "classifications": classifications,
+            "top_classification": max(classifications, key=lambda x: x["confidence_score"]) if classifications else None
+        }
+        
+    except Exception as e:
+        # Fallback to rule-based classification if custom model is not available
+        return fallback_classification(text)
+
+def fallback_classification(text: str):
+    """
+    Fallback rule-based classification when custom model is not available
+    """
+    text_lower = text.lower()
+    
+    categories = {
+        "support": ["help", "support", "problem", "issue", "error", "bug", "fix"],
+        "sales": ["buy", "purchase", "price", "cost", "order", "sale", "discount"],
+        "technical": ["technical", "setup", "install", "configure", "api", "integration"],
+        "billing": ["bill", "invoice", "payment", "charge", "refund", "subscription"],
+        "general": ["hello", "hi", "thanks", "thank you", "information"]
+    }
+    
+    matches = {}
+    for category, keywords in categories.items():
+        score = sum(1 for keyword in keywords if keyword in text_lower)
+        if score > 0:
+            matches[category] = min(score / len(keywords) * 2, 1.0)  # Normalize score
+    
+    # If no matches, classify as "other"
+    if not matches:
+        matches["other"] = 1.0
+    
+    # Convert to classification format
+    total_score = sum(matches.values())
+    classifications = [
+        {
+            "category": category,
+            "confidence_score": score / total_score
+        }
+        for category, score in matches.items()
+    ]
+    
+    return {
+        "classifications": classifications,
+        "top_classification": max(classifications, key=lambda x: x["confidence_score"]),
+        "note": "Using fallback rule-based classification"
+    }
 
 # Service functions (all in one file)
 def detect_language(text: str):
@@ -166,6 +251,7 @@ def read_root():
     return {
         "message": "Azure AI Text Analytics Service",
         "status": "running",
+        "version": "1.0.0",
         "endpoints": [
             "/analyze/language",
             "/analyze/sentiment", 
@@ -173,6 +259,7 @@ def read_root():
             "/analyze/entities",
             "/analyze/linked-entities",
             "/analyze/pii",
+            "/analyze/classify",
             "/analyze/all"
         ]
     }
@@ -182,6 +269,30 @@ def health_check():
     if client is None:
         return {"status": "unhealthy", "message": "Azure client not configured"}
     return {"status": "healthy", "message": "Service is running properly"}
+
+@app.post("/analyze/classify")
+def classify_text(request: ClassificationRequest):
+    """
+    Classify text into custom categories
+    - Uses Azure Custom Text if model is available
+    - Falls back to rule-based classification
+    """
+    return classify_text_custom(
+        request.text, 
+        request.project_name, 
+        request.deploment_name
+    )
+
+@app.post("/analyze/classify/simple")
+def classify_text_simple(request: TextRequest):
+    """
+    Simple classification with default project settings
+    """
+    return classify_text_custom(
+        request.text, 
+        "classify-text-lab", 
+        "articles"
+    )
 
 @app.post("/analyze/language")
 def analyze_language_endpoint(request: TextRequest):
@@ -219,7 +330,12 @@ def analyze_all_endpoint(request: TextRequest):
         "key_phrases": extract_key_phrases(request.text),
         "entities": recognize_entities(request.text),
         "linked_entities": recognize_linked_entities(request.text),
-        "pii": detect_pii(request.text)
+        "pii": detect_pii(request.text),
+        "classification": classify_text_custom(
+            request.text, 
+            "classify-text-lab",  # Your project name
+            "articles"            # Your deployment name
+        )
     }
 
 if __name__ == "__main__":
